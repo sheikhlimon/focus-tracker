@@ -22,6 +22,7 @@ Transform the existing client-only daily tasks app into a full-stack focus sessi
 | Auth          | JWT (access + refresh tokens), email/password       |
 | State         | React Query (server) + useState/useContext (client) |
 | Drag-and-Drop | @dnd-kit/core + @dnd-kit/sortable                   |
+| Package Mgr   | pnpm (workspaces for monorepo)                      |
 
 ### Data Model
 
@@ -244,7 +245,11 @@ daily-tasks-app/
 │   ├── prisma/
 │   │   └── migrations/      # database migrations
 │   └── ...
-└── package.json             # root workspace config
+└── pnpm-workspace.yaml      # pnpm workspace config
+```
+
+**pnpm workspaces:** Root `pnpm-workspace.yaml` defines `client/` and `server/` as workspace members. Shared dev dependencies (TypeScript, ESLint, Prettier) at root level.
+
 ```
 
 ## Testing Strategy (TDD)
@@ -263,3 +268,4 @@ daily-tasks-app/
 5. **Dark/light mode transitions** — animated theme switching
 6. **Offline support** — service worker for offline task creation
 7. **Cross-device sync** — WebSocket for real-time timer sync
+```
