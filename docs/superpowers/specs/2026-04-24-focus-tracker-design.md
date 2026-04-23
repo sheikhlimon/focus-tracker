@@ -250,6 +250,13 @@ daily-tasks-app/
 
 **pnpm workspaces:** Root `pnpm-workspace.yaml` defines `client/` and `server/` as workspace members. Shared dev dependencies (TypeScript, ESLint, Prettier) at root level.
 
+## Deployment (Render)
+
+- Backend deploys to Render with `NODE_ENV=development`
+- Husky prepare script uses `husky || true` so CI/CD doesn't fail on git hooks setup
+- Frontend builds as static assets, served by Vite preview or separate hosting
+- Environment variables managed via Render dashboard (DATABASE_URL, JWT_SECRET, etc.)
+
 ```
 
 ## Testing Strategy (TDD)
