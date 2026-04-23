@@ -4,53 +4,86 @@ This file defines the standards and conventions for this project. Treat it as au
 
 ## Project Overview
 
-- **Tech Stack**: React 19, TypeScript, Vite, Vitest, ESLint, Prettier, Husky
+- **Tech Stack**: React 19, TypeScript, Vite, Tailwind CSS, Express.js, Prisma, PostgreSQL, React Query, @dnd-kit
+- **Package Manager**: pnpm (workspaces)
 - **Methodology**: Test-Driven Development (TDD) - write tests first, then implement features
+- **See CLAUDE.md** for project context, design spec, and implementation plan locations
 
 ## File Structure
 
-- `src/`: Source code
-  - `*.tsx`: React components
-  - `*.ts`: Types and utilities
-  - `*.test.tsx`: Tests (colocated with components where possible)
-- `public/`: Static assets
-- Root files: Configs for Vite, ESLint, etc.
+```
+client/              # React frontend
+  src/
+    components/      # UI components organized by feature (auth/, calendar/, playlist/, layout/)
+    hooks/           # Custom React hooks
+    api/             # React Query config + query hooks
+    context/         # React contexts (Auth, Theme)
+    pages/           # Page-level components
+    types/           # TypeScript types
+  __tests__/         # Test files
+
+server/              # Express backend
+  src/
+    routes/          # API route handlers
+    services/        # Business logic
+    middleware/      # Auth, validation, error handling
+    utils/           # Helpers (tokens, etc.)
+    __tests__/       # Test files
+  prisma/            # Database schema and migrations
+```
 
 ## Coding Style
 
 - Use TypeScript for all new code
 - Prefer functional components with hooks
 - Props interfaces: Define at top of component file
-- State: Use `React.useState` for local state
+- State: React Query for server state, useState/useContext for client state
 - Event handlers: Prefix with `on` (e.g., `onAddTask`)
 - Accessibility: Use semantic HTML, ARIA labels where needed
+- Comments explain WHY not WHAT
+- No JSDoc unless public API
+- Use CSS variables/tokens, no arbitrary colors
+- Use cn() for conditional class merging
+- No inline styles, use Tailwind classes
 
 ## Testing
 
-- Use Vitest with React Testing Library
+- Client: Vitest with React Testing Library
+- Server: Vitest with Supertest
 - Test user interactions, not implementation details
 - Naming: `should [describe behavior]`
-- Run tests: `npm run test`
-- Test coverage: Aim for high coverage on user-facing features
+- Run tests: `pnpm test`
+- TDD cycle: RED (failing test) → GREEN (minimal implementation) → REFACTOR → COMMIT
 
 ## Commands
 
-- `npm run dev`: Start development server
-- `npm run build`: Build for production
-- `npm run lint`: Run ESLint
-- `npm run test`: Run tests
-- `npm run preview`: Preview production build
+- `pnpm dev`: Start client dev server
+- `pnpm dev:server`: Start server dev server
+- `pnpm build`: Build for production
+- `pnpm lint`: Run ESLint
+- `pnpm test`: Run all tests
 
 ## Git
 
 - Use conventional commits (e.g., `feat: add delete task`)
+- One logical change per commit
 - Pre-commit hooks via Husky: Lint and format code
+- `prepare: "husky || true"` for CI/CD compatibility
 
-## Conventions
+## Anti-Patterns (Avoid AI-Generated Look)
 
-- Component exports: Default export
-- Imports: Group by external libs, then internal
-- Error handling: Use try/catch where async operations occur
-- TODOs: Use comments like `// TODO: implement feature`
+- No generic blue/indigo everywhere
+- No perfectly centered heroes with "Get Started"
+- No same border radius on everything
+- No default shadows on all cards
+- No template nav bars
+- No bland "Welcome to..." headings
+- No gradient backgrounds everywhere
 
-If a new pattern emerges or command is used repeatedly, document it here.
+## Prefer Instead
+
+- Asymmetric layouts, mixed border radii
+- Dark mode support
+- Micro-interactions, skeleton loaders
+- Data density over whitespace
+- Personality over templates
