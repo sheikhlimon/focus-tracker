@@ -1,10 +1,7 @@
 type TaskListProps = {
   header?: React.ReactNode;
 };
-export default function TaskList({
-  header,
-  children,
-}: React.PropsWithChildren<TaskListProps>) {
+export default function TaskList({ header, children }: React.PropsWithChildren<TaskListProps>) {
   return (
     <>
       {header}

@@ -7,11 +7,7 @@ type TaskListItemProps = {
   onDeleteTask: (id: number) => void;
 };
 
-export default function TaskListItem({
-  task,
-  onToggleTask,
-  onDeleteTask,
-}: TaskListItemProps) {
+export default function TaskListItem({ task, onToggleTask, onDeleteTask }: TaskListItemProps) {
   return (
     <li className="flex items-center space-x-3 py-2">
       <input

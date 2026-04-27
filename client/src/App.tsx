@@ -21,9 +21,7 @@ function App() {
 
   const onToggleTask = (id: number) => {
     setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, isCompleted: !task.isCompleted } : task,
-      ),
+      tasks.map((task) => (task.id === id ? { ...task, isCompleted: !task.isCompleted } : task)),
     );
   };
 
@@ -38,11 +36,7 @@ function App() {
           onClick={toggleTheme}
           className="absolute top-4 right-4 w-8 h-8 text-gray-600 hover:text-gray-800 dark:text-yellow-400 dark:hover:text-yellow-300 focus:outline-none transition-colors flex items-center justify-center cursor-pointer"
         >
-          {theme === "dark" ? (
-            <Sun className="w-5 h-5" />
-          ) : (
-            <Moon className="w-5 h-5" />
-          )}
+          {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
         <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8 text-black dark:text-white">
           Tasks

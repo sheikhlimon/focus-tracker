@@ -8,12 +8,13 @@ Full-stack focus session tracker. Calendar navigation, Pomodoro-style timers, dr
 
 - Monorepo: `client/` (React 19 + Vite + Tailwind) and `server/` (Express + Prisma + PostgreSQL)
 - Package manager: pnpm workspaces
-- Currently: client-only React app, about to restructure into monorepo
+- Linting: oxlint, Formatting: oxfmt (replaced ESLint + Prettier)
+- Currently: monorepo scaffolded, server has no source files yet
 
 ## Key Documents
 
-- **Design Spec:** `docs/superpowers/specs/2026-04-24-focus-tracker-design.md` — full architecture, API design, data model, UI layout
-- **Implementation Plan:** `docs/superpowers/plans/2026-04-24-focus-tracker.md` — phased task list with TDD steps
+- **Design Spec:** `docs/focus-tracker-design.md` — full architecture, API design, data model, UI layout
+- **Implementation Plan:** `docs/focus-tracker-plan.md` — phased task list with TDD steps
 - **Project Rules:** `AGENTS.md` — coding style, testing, git conventions
 
 ## Before Starting Any Session
@@ -53,10 +54,11 @@ iOS-inspired premium feel. See design spec for full details.
 - `pnpm dev:server` — start server dev server
 - `pnpm test` — run all tests
 - `pnpm build` — build all
-- `pnpm lint` — lint all
+- `pnpm lint` — lint all (oxlint)
+- `pnpm format` — format all (oxfmt)
 
 ## Git
 
 - Format: `feat: one liner description`
-- Pre-commit hooks via Husky: lint and format
+- Pre-commit hooks via Husky: oxlint + oxfmt via lint-staged
 - `prepare: "husky || true"` for CI/CD compatibility

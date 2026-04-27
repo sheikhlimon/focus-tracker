@@ -6,6 +6,8 @@ This file defines the standards and conventions for this project. Treat it as au
 
 - **Tech Stack**: React 19, TypeScript, Vite, Tailwind CSS, Express.js, Prisma, PostgreSQL, React Query, @dnd-kit
 - **Package Manager**: pnpm (workspaces)
+- **Linting**: oxlint (replaces ESLint)
+- **Formatting**: oxfmt (replaces Prettier)
 - **Methodology**: Test-Driven Development (TDD) - write tests first, then implement features
 - **See CLAUDE.md** for project context, design spec, and implementation plan locations
 
@@ -60,14 +62,15 @@ server/              # Express backend
 - `pnpm dev`: Start client dev server
 - `pnpm dev:server`: Start server dev server
 - `pnpm build`: Build for production
-- `pnpm lint`: Run ESLint
+- `pnpm lint`: Run oxlint
+- `pnpm format`: Run oxfmt
 - `pnpm test`: Run all tests
 
 ## Git
 
 - Use conventional commits (e.g., `feat: add delete task`)
 - One logical change per commit
-- Pre-commit hooks via Husky: Lint and format code
+- Pre-commit hooks via Husky: oxlint + oxfmt via lint-staged
 - `prepare: "husky || true"` for CI/CD compatibility
 
 ## Anti-Patterns (Avoid AI-Generated Look)
