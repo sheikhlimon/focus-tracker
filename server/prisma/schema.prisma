@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String    @map("password_hash")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  settings     Settings?
+  days         Day[]
+
+  @@map("users")
+}
+
+model Settings {
+  id                  String  @id @default(cuid())
+  userId              String  @unique @map("user_id")
+  focusInterval       Int     @default(25) @map("focus_interval")
+  notificationsEnabled Boolean @default(true) @map("notifications_enabled")
+  taskOverflow        String  @default("keep") @map("task_overflow")
+  theme               String  @default("system")
+  weekStartsOn        String  @default("monday") @map("week_starts_on")
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
+
+model Day {
+  id     String   @id @default(cuid())
+  date   DateTime @unique
+  userId String   @map("user_id")
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks  Task[]
+
+  @@unique([date, userId])
+  @@map("days")
+}
+
+model Task {
+  id       String   @id @default(cuid())
+  title    String
+  position Int
+  status   String   @default("queued")
+  dayId    String   @map("day_id")
+  day      Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  sessions Session[]
+
+  @@map("tasks")
+}
+
+model Session {
+  id              String    @id @default(cuid())
+  startTime       DateTime  @map("start_time")
+  endTime         DateTime? @map("end_time")
+  durationSeconds Int       @default(0) @map("duration_seconds")
+  status          String    @default("running")
+  pauses          Json      @default("[]")
+  taskId          String    @map("task_id")
+  task            Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
