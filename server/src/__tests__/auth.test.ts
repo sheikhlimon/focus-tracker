@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import request from "supertest";
 import { createApp } from "../index";
 import prisma from "../db";
+import { generateRefreshToken } from "../utils/tokens";
 
 const app = createApp();
 
-// Helper to create a user directly in DB for login tests
 async function createUser(email: string, password: string, name: string) {
   const bcrypt = await import("bcryptjs");
   const passwordHash = await bcrypt.hash(password, 10);
@@ -39,7 +39,6 @@ describe("POST /api/auth/signup", () => {
     });
     expect(res.body.user).not.toHaveProperty("passwordHash");
 
-    // Verify user exists in DB
     const user = await prisma.user.findUnique({
       where: { email: "test@example.com" },
     });
@@ -114,5 +113,37 @@ describe("POST /api/auth/login", () => {
 
     expect(res.status).toBe(401);
     expect(res.body).toEqual({ error: "Invalid credentials" });
+  });
+});
+
+describe("POST /api/auth/refresh", () => {
+  beforeEach(async () => {
+    await prisma.session.deleteMany();
+    await prisma.task.deleteMany();
+    await prisma.day.deleteMany();
+    await prisma.settings.deleteMany();
+    await prisma.user.deleteMany();
+  });
+
+  it("should return new access token with valid refresh token", async () => {
+    const user = await createUser("test@example.com", "password123", "Test");
+    const refreshToken = generateRefreshToken(user.id);
+
+    const res = await request(app)
+      .post("/api/auth/refresh")
+      .send({ refreshToken });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("accessToken");
+    expect(res.body.accessToken.split(".")).toHaveLength(3);
+  });
+
+  it("should reject invalid refresh token", async () => {
+    const res = await request(app)
+      .post("/api/auth/refresh")
+      .send({ refreshToken: "garbage-token" });
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: "Invalid refresh token" });
   });
 });

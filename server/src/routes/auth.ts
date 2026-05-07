@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { validate } from "../middleware/validation";
+import { verifyRefreshToken, generateAccessToken } from "../utils/tokens";
 import * as authService from "../services/auth";
 
 const router = Router();
@@ -40,6 +41,20 @@ router.post("/login", validate(loginSchema), async (req, res) => {
   }
 
   res.status(200).json(result);
+});
+
+const refreshSchema = z.object({
+  refreshToken: z.string().min(1),
+});
+
+router.post("/refresh", validate(refreshSchema), async (req, res) => {
+  try {
+    const decoded = verifyRefreshToken(req.body.refreshToken);
+    const accessToken = generateAccessToken(decoded.userId);
+    res.json({ accessToken });
+  } catch {
+    res.status(401).json({ error: "Invalid refresh token" });
+  }
 });
 
 export default router;
