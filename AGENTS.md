@@ -48,6 +48,14 @@ server/              # Express backend
 - Use cn() for conditional class merging
 - No inline styles, use Tailwind classes
 
+## TypeScript Rules
+
+- Never use `any` type — use proper interfaces instead
+- Define `AuthRequest` interface extending Express `Request` with `userId` in `middleware/auth.ts`, import it in route files
+- Use array index access (`parts[0]`) instead of destructuring when TypeScript can't infer the type (e.g., `.split()` results)
+- Always register `errorHandler` middleware in `createApp()` after all routes
+- Dates: always use `Date.UTC()` to avoid timezone bugs — never use `new Date("YYYY-MM-DD")` or `new Date(year, month, day)`
+
 ## Testing
 
 - Client: Vitest with React Testing Library

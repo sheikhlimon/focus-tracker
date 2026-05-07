@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/tokens";
 
+export interface AuthRequest extends Request {
+  userId?: string;
+}
+
 export function authMiddleware(
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -17,7 +21,7 @@ export function authMiddleware(
 
   try {
     const decoded = verifyAccessToken(token);
-    (req as any).userId = decoded.userId;
+    req.userId = decoded.userId;
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });

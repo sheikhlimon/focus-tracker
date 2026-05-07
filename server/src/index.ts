@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth";
+import daysRoutes from "./routes/days";
+import { errorHandler } from "./middleware/errorHandler";
 
 export function createApp() {
   const app = express();
@@ -13,6 +15,9 @@ export function createApp() {
   });
 
   app.use("/api/auth", authRoutes);
+  app.use("/api/days", daysRoutes);
+
+  app.use(errorHandler);
 
   return app;
 }
