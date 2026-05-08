@@ -17,20 +17,26 @@ router.get("/", async (req: AuthRequest, res: Response) => {
   res.json(days);
 });
 
-router.get("/:date", async (req: AuthRequest, res: Response) => {
-  const day = await daysService.getDayByDate(req.userId!, req.params.date);
-  res.json(day);
-});
+router.get(
+  "/:date",
+  async (req: AuthRequest<{ date: string }>, res: Response) => {
+    const day = await daysService.getDayByDate(req.userId!, req.params.date);
+    res.json(day);
+  },
+);
 
-router.post("/:date", async (req: AuthRequest, res: Response) => {
-  const result = await daysService.createDay(req.userId!, req.params.date);
+router.post(
+  "/:date",
+  async (req: AuthRequest<{ date: string }>, res: Response) => {
+    const result = await daysService.createDay(req.userId!, req.params.date);
 
-  if ("error" in result) {
-    res.status(result.status).json({ error: result.error });
-    return;
-  }
+    if ("error" in result) {
+      res.status(result.status).json({ error: result.error });
+      return;
+    }
 
-  res.status(201).json(result);
-});
+    res.status(201).json(result);
+  },
+);
 
 export default router;

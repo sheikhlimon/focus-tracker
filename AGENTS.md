@@ -51,10 +51,14 @@ server/              # Express backend
 ## TypeScript Rules
 
 - Never use `any` type — use proper interfaces instead
-- Define `AuthRequest` interface extending Express `Request` with `userId` in `middleware/auth.ts`, import it in route files
+- Define `AuthRequest<P>` generic interface in `middleware/auth.ts` with `userId` — route handlers specify params: `AuthRequest<{ date: string }>`
+- For nested routers with `mergeParams: true`, destructure params inside handler: `const { taskId, date } = req.params`
 - Use array index access (`parts[0]`) instead of destructuring when TypeScript can't infer the type (e.g., `.split()` results)
 - Always register `errorHandler` middleware in `createApp()` after all routes
 - Dates: always use `Date.UTC()` to avoid timezone bugs — never use `new Date("YYYY-MM-DD")` or `new Date(year, month, day)`
+- Service error returns: use `status: 409 as number` to satisfy Express's `res.status()` type
+- No `declaration: true` in tsconfig — this is an app, not a library
+- `tsc --noEmit` runs in `.husky/pre-commit` (not lint-staged) — it checks the whole project, not just staged files
 
 ## Testing
 

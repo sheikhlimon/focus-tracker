@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/tokens";
 
-export interface AuthRequest extends Request {
+export interface AuthRequest<P = Record<string, string>> extends Request<P> {
   userId?: string;
 }
 

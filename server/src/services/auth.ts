@@ -15,7 +15,7 @@ function sanitizeUser(user: {
 export async function signup(email: string, name: string, password: string) {
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return { error: "Email already exists" as const, status: 409 };
+    return { error: "Email already exists" as const, status: 409 as number };
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -32,12 +32,12 @@ export async function signup(email: string, name: string, password: string) {
 export async function login(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    return { error: "Invalid credentials" as const, status: 401 };
+    return { error: "Invalid credentials" as const, status: 401 as number };
   }
 
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
-    return { error: "Invalid credentials" as const, status: 401 };
+    return { error: "Invalid credentials" as const, status: 401 as number };
   }
 
   const accessToken = generateAccessToken(user.id);

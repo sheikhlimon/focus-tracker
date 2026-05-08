@@ -33,7 +33,8 @@ router.post(
   "/",
   validate(createTaskSchema),
   async (req: AuthRequest, res: Response) => {
-    const dayId = await getDayId(req.userId!, req.params.date);
+    const { date } = req.params;
+    const dayId = await getDayId(req.userId!, date);
     if (!dayId) {
       res.status(404).json({ error: "Day not found" });
       return;
@@ -57,17 +58,15 @@ router.patch(
   "/:taskId",
   validate(updateTaskSchema),
   async (req: AuthRequest, res: Response) => {
-    const task = await tasksService.updateTask(
-      req.params.taskId,
-      req.params.date,
-      req.body,
-    );
+    const { taskId, date } = req.params;
+    const task = await tasksService.updateTask(taskId, date, req.body);
     res.json(task);
   },
 );
 
 router.delete("/:taskId", async (req: AuthRequest, res: Response) => {
-  await tasksService.deleteTask(req.params.taskId);
+  const { taskId } = req.params;
+  await tasksService.deleteTask(taskId);
   res.json({ ok: true });
 });
 

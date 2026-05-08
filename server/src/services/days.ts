@@ -45,7 +45,7 @@ export async function createDay(userId: string, date: string) {
   });
 
   if (existing) {
-    return { error: "Day already exists" as const, status: 409 };
+    return { error: "Day already exists" as const, status: 409 as number };
   }
 
   return prisma.day.create({

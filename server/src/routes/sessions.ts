@@ -28,7 +28,7 @@ router.post(
 router.patch(
   "/:sessionId",
   validate(actionSchema),
-  async (req: AuthRequest, res: Response) => {
+  async (req: AuthRequest<{ sessionId: string }>, res: Response) => {
     const action = req.body.action;
     let session;
 
@@ -44,7 +44,7 @@ router.patch(
 
 router.patch(
   "/:sessionId/complete",
-  async (req: AuthRequest, res: Response) => {
+  async (req: AuthRequest<{ sessionId: string }>, res: Response) => {
     const session = await sessionsService.completeSession(req.params.sessionId);
     res.json(session);
   },

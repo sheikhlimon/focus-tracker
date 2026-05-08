@@ -25,7 +25,7 @@ router.post("/signup", validate(signupSchema), async (req, res) => {
   );
 
   if ("error" in result) {
-    res.status(result.status).json({ error: result.error });
+    res.status(result.status!).json({ error: result.error });
     return;
   }
 
@@ -36,7 +36,7 @@ router.post("/login", validate(loginSchema), async (req, res) => {
   const result = await authService.login(req.body.email, req.body.password);
 
   if ("error" in result) {
-    res.status(result.status).json({ error: result.error });
+    res.status(result.status!).json({ error: result.error });
     return;
   }
 
