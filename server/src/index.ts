@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth";
 import daysRoutes from "./routes/days";
 import tasksRoutes from "./routes/tasks";
 import sessionsRoutes from "./routes/sessions";
+import settingsRoutes from "./routes/settings";
 import { errorHandler } from "./middleware/errorHandler";
 
 export function createApp() {
@@ -20,6 +21,7 @@ export function createApp() {
   app.use("/api/days", daysRoutes);
   app.use("/api/days/:date/tasks", tasksRoutes);
   app.use("/api/sessions", sessionsRoutes);
+  app.use("/api/settings", settingsRoutes);
 
   app.use(errorHandler);
 
