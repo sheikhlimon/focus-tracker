@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth";
 import daysRoutes from "./routes/days";
+import tasksRoutes from "./routes/tasks";
 import { errorHandler } from "./middleware/errorHandler";
 
 export function createApp() {
@@ -16,6 +17,7 @@ export function createApp() {
 
   app.use("/api/auth", authRoutes);
   app.use("/api/days", daysRoutes);
+  app.use("/api/days/:date/tasks", tasksRoutes);
 
   app.use(errorHandler);
 
