@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Sidebar from "./components/layout/Sidebar";
 import CalendarView from "./components/calendar/CalendarView";
+import PlaylistView from "./components/playlist/PlaylistView";
 
 function getCurrentMonth() {
   const now = new Date();
@@ -26,7 +27,7 @@ function AppShell() {
         <main className="flex-1 overflow-y-auto p-6">
           <Routes>
             <Route index element={<CalendarView month={month} />} />
-            <Route path="day/:date" element={<div>Day view coming soon</div>} />
+            <Route path="day/:date" element={<PlaylistView />} />
             <Route path="settings" element={<div>Settings coming soon</div>} />
           </Routes>
         </main>
