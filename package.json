@@ -25,9 +25,6 @@
     "client/**/*.{js,ts,jsx,tsx}": [
       "oxlint --fix",
       "oxfmt --write"
-    ],
-    "!**/*.{js,ts,jsx,tsx}": [
-      "oxfmt --write"
     ]
   },
   "pnpm": {

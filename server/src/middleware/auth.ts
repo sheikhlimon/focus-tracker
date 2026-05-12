@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "@clerk/backend";
+import prisma from "../db";
 
 export interface AuthRequest<P = Record<string, string>> extends Request<P> {
   userId?: string;
@@ -24,6 +25,13 @@ export async function authMiddleware(
       secretKey: process.env.CLERK_SECRET_KEY,
     });
     req.userId = claims.sub;
+
+    await prisma.user.upsert({
+      where: { id: claims.sub },
+      update: {},
+      create: { id: claims.sub },
+    });
+
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });

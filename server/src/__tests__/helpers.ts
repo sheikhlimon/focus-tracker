@@ -3,9 +3,9 @@ import prisma from "../db";
 export async function createUser(email: string) {
   return prisma.user.create({
     data: {
+      id: `test-${Date.now()}`,
       email,
       name: "Test",
-      passwordHash: "clerk-managed",
       settings: { create: {} },
     },
   });
