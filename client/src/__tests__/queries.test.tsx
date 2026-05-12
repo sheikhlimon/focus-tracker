@@ -13,7 +13,15 @@ vi.mock("@clerk/clerk-react", () => ({
 const mockFetch = vi.fn();
 globalThis.fetch = mockFetch;
 
-import { useMonth, useDay, useSettings, useAddTask } from "../api/queries";
+import {
+  useMonth,
+  useDay,
+  useSettings,
+  useAddTask,
+  useUpdateTask,
+  useDeleteTask,
+  useReorderTasks,
+} from "../api/queries";
 import { ApiClientProvider } from "../api/ApiClientProvider";
 
 function createWrapper() {
@@ -151,6 +159,76 @@ describe("query hooks", () => {
           headers: expect.objectContaining({
             Authorization: "Bearer test-token",
           }),
+        }),
+      );
+    });
+  });
+
+  describe("useUpdateTask", () => {
+    it("should PATCH a task with updated fields", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({ id: 1, title: "Updated", status: "active" }),
+      });
+
+      const { result } = renderHook(() => useUpdateTask("2026-05-09"), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate({ taskId: 1, body: { status: "active" } });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining("/api/days/2026-05-09/tasks/1"),
+        expect.objectContaining({ method: "PATCH" }),
+      );
+    });
+  });
+
+  describe("useDeleteTask", () => {
+    it("should DELETE a task", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({}),
+      });
+
+      const { result } = renderHook(() => useDeleteTask("2026-05-09"), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate(1);
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining("/api/days/2026-05-09/tasks/1"),
+        expect.objectContaining({ method: "DELETE" }),
+      );
+    });
+  });
+
+  describe("useReorderTasks", () => {
+    it("should PATCH reorder with new task order", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([]),
+      });
+
+      const { result } = renderHook(() => useReorderTasks("2026-05-09"), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate([3, 1, 2]);
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining("/api/days/2026-05-09/tasks/reorder"),
+        expect.objectContaining({
+          method: "PATCH",
+          body: JSON.stringify({ taskIds: [3, 1, 2] }),
         }),
       );
     });

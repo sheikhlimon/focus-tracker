@@ -54,3 +54,46 @@ export function useAddTask(date: string) {
     },
   });
 }
+
+export function useUpdateTask(date: string) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      taskId,
+      body,
+    }: {
+      taskId: number;
+      body: { title?: string; status?: string };
+    }) => api.patch(`/days/${date}/tasks/${taskId}`, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["day", date] });
+    },
+  });
+}
+
+export function useDeleteTask(date: string) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (taskId: number) => api.delete(`/days/${date}/tasks/${taskId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["day", date] });
+    },
+  });
+}
+
+export function useReorderTasks(date: string) {
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (taskIds: number[]) =>
+      api.patch(`/days/${date}/tasks/reorder`, { taskIds }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["day", date] });
+    },
+  });
+}
