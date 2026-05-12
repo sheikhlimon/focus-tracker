@@ -6,15 +6,17 @@
 
 **Architecture:** pnpm monorepo with `client/` (React/Vite) and `server/` (Express/Prisma). PostgreSQL for persistence. React Query for server state. TDD throughout.
 
-**Tech Stack:** React 19, TypeScript, Vite, Tailwind CSS, Express.js, Prisma, PostgreSQL, React Query, @dnd-kit, React Router, Zod, JWT, Vitest
+**Tech Stack:** React 19, TypeScript, Vite, Tailwind CSS, Express.js, Prisma, PostgreSQL, React Query, @dnd-kit, React Router, Zod, Clerk, Vitest
 
 **Working Rules:** EXPLAIN FIRST. ONE FILE AT A TIME. COMMIT AFTER EACH FEATURE. TDD RED-GREEN CYCLE. No anti-patterns (see CLAUDE.md).
 
-**Design Spec:** `docs/superpowers/specs/2026-04-24-focus-tracker-design.md`
+**Design Spec:** `docs/focus-tracker-design.md`
+
+**Note:** Auth was originally custom JWT, migrated to Clerk. Phases 3 (Auth API) and 8 (Auth Frontend) were adapted accordingly. Linting uses oxlint + oxfmt (not ESLint + Prettier). Font is Geist Variable (not Inter).
 
 ---
 
-## Phase 1: Monorepo Setup
+## Phase 1: Monorepo Setup ✅
 
 ### Task 1.1: Initialize pnpm workspaces
 
@@ -27,7 +29,7 @@
 
 ---
 
-## Phase 2: Server Core & Database
+## Phase 2: Server Core & Database ✅
 
 ### Task 2.1: Prisma schema and database setup
 

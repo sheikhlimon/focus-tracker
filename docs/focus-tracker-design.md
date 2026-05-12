@@ -19,7 +19,7 @@ Transform the existing client-only daily tasks app into a full-stack focus sessi
 | Backend       | Express.js + TypeScript                             |
 | Database      | PostgreSQL                                          |
 | ORM           | Prisma                                              |
-| Auth          | JWT (access + refresh tokens), email/password       |
+| Auth          | Clerk (managed auth, pre-built UI components)       |
 | State         | React Query (server) + useState/useContext (client) |
 | Drag-and-Drop | @dnd-kit/core + @dnd-kit/sortable                   |
 | Package Mgr   | pnpm (workspaces for monorepo)                      |
@@ -28,7 +28,7 @@ Transform the existing client-only daily tasks app into a full-stack focus sessi
 
 ```
 User
-  ├── email, password_hash, name
+  ├── email, name (password managed by Clerk)
   └── Settings (1:1)
         ├── focus_interval (minutes), default 25
         ├── notifications_enabled, default true
@@ -54,10 +54,9 @@ Days are lazily created — first task added to a date creates the day record.
 ### Auth
 
 ```
-POST   /api/auth/signup      — create account
-POST   /api/auth/login       — login, returns access + refresh tokens
-POST   /api/auth/refresh     — refresh access token
-POST   /api/auth/logout      — invalidate refresh token
+Managed by Clerk — no custom auth routes
+Client: ClerkProvider, SignIn/SignUp components, useAuth() for tokens
+Server: authMiddleware verifies Clerk JWT via @clerk/backend
 ```
 
 ### Days
@@ -100,8 +99,8 @@ PATCH  /api/settings                 — update settings (auto-save, debounced)
 /                 → Calendar view (home)
 /day/:date        → Playlist view for a specific date
 /settings         → Settings page
-/auth/login       → Login page
-/auth/signup      → Signup page
+/login            → Login page
+/signup           → Signup page
 ```
 
 ### State Management
@@ -125,9 +124,9 @@ PATCH  /api/settings                 — update settings (auto-save, debounced)
 
 ```
 App
-├── AuthProvider
+├── ClerkProvider
+│   └── ApiClientProvider
 ├── Sidebar (always visible on desktop)
-│   ├── SidebarHeader (logo, settings icon, avatar)
 │   └── DateCard[] (grouped: Today / Upcoming / Past)
 ├── MainPanel (switches between views)
 │   ├── CalendarView (month grid — default on desktop, home on mobile)
@@ -211,7 +210,7 @@ iOS-inspired premium feel:
 - Light mode: clean whites (#FFFFFF), off-whites (#F2F2F7), subtle gray borders
 - Dark mode: true blacks (#000000), dark grays (#1C1C1E), elevated surfaces (#2C2C2E)
 - Accent: system blue (#007AFF) for primary actions, not generic indigo
-- Typography: Inter (web equivalent of SF Pro), crisp weight hierarchy
+- Typography: Geist Variable, crisp weight hierarchy
 - Shadows: subtle, only on elevated elements (active task card, modals)
 - Border radii: mixed — 16px on cards, 8px on buttons, 4px on inputs
 - One gradient: subtle accent glow on active task card only
@@ -248,16 +247,7 @@ daily-tasks-app/
 └── pnpm-workspace.yaml      # pnpm workspace config
 ```
 
-**pnpm workspaces:** Root `pnpm-workspace.yaml` defines `client/` and `server/` as workspace members. Shared dev dependencies (TypeScript, ESLint, Prettier) at root level.
-
-## Deployment (Render)
-
-- Backend deploys to Render with `NODE_ENV=development`
-- Husky prepare script uses `husky || true` so CI/CD doesn't fail on git hooks setup
-- Frontend builds as static assets, served by Vite preview or separate hosting
-- Environment variables managed via Render dashboard (DATABASE_URL, JWT_SECRET, etc.)
-
-```
+**pnpm workspaces:** Root `pnpm-workspace.yaml` defines `client/` and `server/` as workspace members. Shared dev dependencies (TypeScript, oxlint, oxfmt) at root level.
 
 ## Testing Strategy (TDD)
 
@@ -275,4 +265,7 @@ daily-tasks-app/
 5. **Dark/light mode transitions** — animated theme switching
 6. **Offline support** — service worker for offline task creation
 7. **Cross-device sync** — WebSocket for real-time timer sync
+
+```
+
 ```
