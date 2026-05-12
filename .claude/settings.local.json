@@ -1,4 +1,15 @@
 {
-  "enabledMcpjsonServers": ["fetch"],
-  "enableAllProjectMcpServers": true
+  "permissions": {
+    "allow": [
+      "mcp__ddg-search__search",
+      "mcp__web-search-prime__web_search_prime",
+      "mcp__fetch__fetch",
+      "Bash(curl -s \"https://unpkg.com/browse/@clerk/backend@3.4.7/jwt/\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/src/jwt/index.ts\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/src/tokens/verify.ts\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/dist/index.d.ts\")"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["fetch"]
 }

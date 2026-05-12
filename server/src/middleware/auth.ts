@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyAccessToken } from "../utils/tokens";
+import { verifyToken } from "@clerk/backend";
 
 export interface AuthRequest<P = Record<string, string>> extends Request<P> {
   userId?: string;
 }
 
-export function authMiddleware(
+export async function authMiddleware(
   req: AuthRequest,
   res: Response,
   next: NextFunction,
@@ -20,8 +20,10 @@ export function authMiddleware(
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = verifyAccessToken(token);
-    req.userId = decoded.userId;
+    const claims = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+    req.userId = claims.sub;
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });

@@ -1,7 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import request from "supertest";
 import { createApp } from "../index";
 import { createUser, authHeader, cleanDatabase } from "./helpers";
+
+vi.mock("@clerk/backend", () => ({
+  verifyToken: vi.fn(),
+}));
 
 const app = createApp();
 
@@ -14,6 +18,9 @@ describe("Settings routes", () => {
     const user = await createUser("settings-test@example.com");
     userId = user.id;
     headers = authHeader(userId);
+
+    const { verifyToken } = await import("@clerk/backend");
+    vi.mocked(verifyToken).mockResolvedValue({ sub: userId } as never);
   });
 
   describe("GET /api/settings", () => {

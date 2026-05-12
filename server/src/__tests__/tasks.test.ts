@@ -1,22 +1,14 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import request from "supertest";
 import { createApp } from "../index";
 import prisma from "../db";
-import { generateAccessToken } from "../utils/tokens";
+import { createUser, authHeader } from "./helpers";
+
+vi.mock("@clerk/backend", () => ({
+  verifyToken: vi.fn(),
+}));
 
 const app = createApp();
-
-async function createUser(email: string) {
-  const bcrypt = await import("bcryptjs");
-  const passwordHash = await bcrypt.hash("password123", 10);
-  return prisma.user.create({
-    data: { email, name: "Test", passwordHash, settings: { create: {} } },
-  });
-}
-
-function authHeader(userId: string) {
-  return { Authorization: `Bearer ${generateAccessToken(userId)}` };
-}
 
 async function createDayWithTasks(
   userId: string,
@@ -49,6 +41,9 @@ describe("Tasks routes", () => {
     const user = await createUser("tasks-test@example.com");
     userId = user.id;
     headers = authHeader(userId);
+
+    const { verifyToken } = await import("@clerk/backend");
+    vi.mocked(verifyToken).mockResolvedValue({ sub: userId } as never);
 
     const day = await prisma.day.create({
       data: {
@@ -146,7 +141,6 @@ describe("Tasks routes", () => {
         data: { title: "C", position: 2, status: "queued", dayId },
       });
 
-      // Move C to first position: C, A, B
       const newOrder = [t3.id, t1.id, t2.id];
 
       const res = await request(app)

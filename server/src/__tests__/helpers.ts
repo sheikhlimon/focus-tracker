@@ -1,16 +1,18 @@
 import prisma from "../db";
-import { generateAccessToken } from "../utils/tokens";
 
 export async function createUser(email: string) {
-  const bcrypt = await import("bcryptjs");
-  const passwordHash = await bcrypt.hash("password123", 10);
   return prisma.user.create({
-    data: { email, name: "Test", passwordHash, settings: { create: {} } },
+    data: {
+      email,
+      name: "Test",
+      passwordHash: "clerk-managed",
+      settings: { create: {} },
+    },
   });
 }
 
 export function authHeader(userId: string) {
-  return { Authorization: `Bearer ${generateAccessToken(userId)}` };
+  return { Authorization: `Bearer test-token-for-${userId}` };
 }
 
 export async function cleanDatabase() {

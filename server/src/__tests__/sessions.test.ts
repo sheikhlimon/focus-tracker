@@ -2,21 +2,13 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import request from "supertest";
 import { createApp } from "../index";
 import prisma from "../db";
-import { generateAccessToken } from "../utils/tokens";
+import { createUser, authHeader } from "./helpers";
+
+vi.mock("@clerk/backend", () => ({
+  verifyToken: vi.fn(),
+}));
 
 const app = createApp();
-
-async function createUser(email: string) {
-  const bcrypt = await import("bcryptjs");
-  const passwordHash = await bcrypt.hash("password123", 10);
-  return prisma.user.create({
-    data: { email, name: "Test", passwordHash, settings: { create: {} } },
-  });
-}
-
-function authHeader(userId: string) {
-  return { Authorization: `Bearer ${generateAccessToken(userId)}` };
-}
 
 describe("Session routes", () => {
   let userId: string;
@@ -33,6 +25,9 @@ describe("Session routes", () => {
     const user = await createUser("sessions-test@example.com");
     userId = user.id;
     headers = authHeader(userId);
+
+    const { verifyToken } = await import("@clerk/backend");
+    vi.mocked(verifyToken).mockResolvedValue({ sub: userId } as never);
 
     const day = await prisma.day.create({
       data: { date: new Date(Date.UTC(2026, 4, 7)), userId },
