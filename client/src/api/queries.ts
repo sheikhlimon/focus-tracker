@@ -1,9 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "./ApiClientProvider";
 
+interface MonthDay {
+  date: string;
+  taskCount: number;
+  totalMinutes?: number;
+}
+
+interface DayData {
+  date: string;
+  tasks: { id: number; title: string; status: string; position: number }[];
+}
+
+interface SettingsData {
+  focusInterval: number;
+  notificationsEnabled: boolean;
+  taskOverflow: string;
+}
+
 export function useMonth(month: string) {
   const api = useApi();
-  return useQuery({
+  return useQuery<{ days: MonthDay[] }>({
     queryKey: ["month", month],
     queryFn: () => api.get(`/days?month=${month}`),
   });
@@ -11,7 +28,7 @@ export function useMonth(month: string) {
 
 export function useDay(date: string) {
   const api = useApi();
-  return useQuery({
+  return useQuery<DayData>({
     queryKey: ["day", date],
     queryFn: () => api.get(`/days/${date}`),
   });
@@ -19,7 +36,7 @@ export function useDay(date: string) {
 
 export function useSettings() {
   const api = useApi();
-  return useQuery({
+  return useQuery<SettingsData>({
     queryKey: ["settings"],
     queryFn: () => api.get("/settings"),
   });
