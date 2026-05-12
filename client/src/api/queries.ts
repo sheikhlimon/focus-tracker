@@ -9,7 +9,12 @@ interface MonthDay {
 
 interface DayData {
   date: string;
-  tasks: { id: number; title: string; status: string; position: number }[];
+  tasks: {
+    id: number;
+    title: string;
+    status: "queued" | "active" | "completed";
+    position: number;
+  }[];
 }
 
 interface SettingsData {
