@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCalendar } from "../../hooks/useCalendar";
 import DateCard from "./DateCard";
 
@@ -14,22 +15,22 @@ export default function CalendarView({ month }: CalendarViewProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{label}</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={prevMonth}
-            className="rounded-lg px-3 py-1.5 text-sm hover:bg-accent cursor-pointer"
-          >
-            &larr;
-          </button>
-          <button
-            onClick={nextMonth}
-            className="rounded-lg px-3 py-1.5 text-sm hover:bg-accent cursor-pointer"
-          >
-            &rarr;
-          </button>
-        </div>
+      <div className="flex items-center justify-center gap-1">
+        <button
+          onClick={prevMonth}
+          className="rounded-md p-1 hover:bg-accent cursor-pointer"
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+        <h2 className="min-w-[10rem] text-center text-lg font-semibold">
+          {label}
+        </h2>
+        <button
+          onClick={nextMonth}
+          className="rounded-md p-1 hover:bg-accent cursor-pointer"
+        >
+          <ChevronRight className="size-5" />
+        </button>
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">

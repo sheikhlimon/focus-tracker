@@ -1,3 +1,4 @@
+import { GripVertical, Play, Pause, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Task {
@@ -34,12 +35,12 @@ export default function TaskItem({
         !isActive && !isCompleted && "hover:bg-muted/50",
       )}
     >
-      <button
+      <div
         aria-label="Drag to reorder"
-        className="cursor-grab text-muted-foreground/40 hover:text-muted-foreground active:cursor-grabbing"
+        className="cursor-grab text-muted-foreground/30 hover:text-muted-foreground active:cursor-grabbing"
       >
-        <span className="text-sm leading-none select-none">⠿</span>
-      </button>
+        <GripVertical className="size-4" />
+      </div>
 
       <span
         className={cn(
@@ -55,9 +56,9 @@ export default function TaskItem({
           <button
             onClick={onStart}
             aria-label="Start task"
-            className="rounded-lg px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-primary hover:bg-primary/10 transition-colors cursor-pointer"
           >
-            Start
+            <Play className="size-4" />
           </button>
         )}
 
@@ -66,23 +67,23 @@ export default function TaskItem({
             <button
               onClick={onPause}
               aria-label="Pause task"
-              className="rounded-lg px-2.5 py-1 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
             >
-              Pause
+              <Pause className="size-4" />
             </button>
             <button
               onClick={onComplete}
               aria-label="Complete task"
-              className="rounded-lg px-2.5 py-1 text-xs font-medium text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer"
             >
-              Done
+              <Check className="size-4" />
             </button>
             <button
               onClick={onDelete}
               aria-label="Delete task"
-              className="rounded-lg px-2 py-1 text-xs text-destructive/60 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-destructive/60 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
             >
-              ✕
+              <X className="size-4" />
             </button>
           </>
         )}
@@ -91,9 +92,9 @@ export default function TaskItem({
           <button
             onClick={onDelete}
             aria-label="Delete task"
-            className="rounded-lg px-2 py-1 text-xs text-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
           >
-            ✕
+            <X className="size-4" />
           </button>
         )}
       </div>

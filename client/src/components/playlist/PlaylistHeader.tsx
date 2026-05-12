@@ -1,3 +1,5 @@
+import { ArrowLeft } from "lucide-react";
+
 interface PlaylistHeaderProps {
   date: string;
   taskCount: number;
@@ -23,9 +25,10 @@ export default function PlaylistHeader({
         <button
           onClick={onBack}
           aria-label="Back to calendar"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer mb-1"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer mb-1"
         >
-          &larr; Calendar
+          <ArrowLeft className="size-3.5" />
+          Calendar
         </button>
         <h2 className="text-xl font-semibold tracking-tight">{formatted}</h2>
         <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
