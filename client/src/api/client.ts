@@ -9,8 +9,16 @@ class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = localStorage.getItem("accessToken");
+interface ApiClientConfig {
+  getToken: () => Promise<string | null>;
+}
+
+async function request<T>(
+  path: string,
+  getToken: () => Promise<string | null>,
+  options: RequestInit = {},
+): Promise<T> {
+  const token = await getToken();
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -29,11 +37,6 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const body = await res.json();
 
   if (!res.ok) {
-    if (res.status === 401) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-    }
-
     const message = body.errors?.join(", ") || body.error || "Request failed";
     throw new ApiError(res.status, message);
   }
@@ -41,22 +44,28 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
-export const api = {
-  get: <T>(path: string) => request<T>(path, { method: "GET" }),
+export function createApiClient(config: ApiClientConfig) {
+  const { getToken } = config;
 
-  post: <T>(path: string, body: unknown) =>
-    request<T>(path, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
+  return {
+    get: <T>(path: string) => request<T>(path, getToken, { method: "GET" }),
 
-  patch: <T>(path: string, body: unknown) =>
-    request<T>(path, {
-      method: "PATCH",
-      body: JSON.stringify(body),
-    }),
+    post: <T>(path: string, body: unknown) =>
+      request<T>(path, getToken, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
 
-  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
-};
+    patch: <T>(path: string, body: unknown) =>
+      request<T>(path, getToken, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
 
+    delete: <T>(path: string) =>
+      request<T>(path, getToken, { method: "DELETE" }),
+  };
+}
+
+export type ApiClient = ReturnType<typeof createApiClient>;
 export { ApiError };

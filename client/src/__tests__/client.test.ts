@@ -5,11 +5,11 @@ describe("api client", () => {
 
   beforeEach(() => {
     globalThis.fetch = vi.fn();
-    localStorage.clear();
   });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    vi.resetModules();
   });
 
   it("should make GET requests to the correct URL", async () => {
@@ -18,7 +18,8 @@ describe("api client", () => {
       json: () => Promise.resolve({ data: "test" }),
     } as Response);
 
-    const { api } = await import("../api/client");
+    const { createApiClient } = await import("../api/client");
+    const api = createApiClient({ getToken: async () => null });
     await api.get("/days");
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
@@ -27,22 +28,35 @@ describe("api client", () => {
     );
   });
 
-  it("should attach auth token from localStorage", async () => {
-    localStorage.setItem("accessToken", "test-token-123");
-
+  it("should attach auth token from getToken", async () => {
     vi.mocked(globalThis.fetch).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({}),
     } as Response);
 
-    const { api } = await import("../api/client");
+    const { createApiClient } = await import("../api/client");
+    const api = createApiClient({ getToken: async () => "clerk-token-123" });
     await api.get("/days");
 
     const callArgs = vi.mocked(globalThis.fetch).mock.calls[0];
     expect(callArgs?.[1]?.headers).toHaveProperty(
       "Authorization",
-      "Bearer test-token-123",
+      "Bearer clerk-token-123",
     );
+  });
+
+  it("should not attach Authorization header when getToken returns null", async () => {
+    vi.mocked(globalThis.fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({}),
+    } as Response);
+
+    const { createApiClient } = await import("../api/client");
+    const api = createApiClient({ getToken: async () => null });
+    await api.get("/days");
+
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0];
+    expect(callArgs?.[1]?.headers).not.toHaveProperty("Authorization");
   });
 
   it("should return parsed JSON on success", async () => {
@@ -51,7 +65,8 @@ describe("api client", () => {
       json: () => Promise.resolve({ days: [] }),
     } as Response);
 
-    const { api } = await import("../api/client");
+    const { createApiClient } = await import("../api/client");
+    const api = createApiClient({ getToken: async () => null });
     const result = await api.get("/days");
 
     expect(result).toEqual({ days: [] });
@@ -64,25 +79,9 @@ describe("api client", () => {
       json: () => Promise.resolve({ errors: ["Title is required"] }),
     } as Response);
 
-    const { api } = await import("../api/client");
+    const { createApiClient } = await import("../api/client");
+    const api = createApiClient({ getToken: async () => null });
 
     await expect(api.post("/tasks", {})).rejects.toThrow("Title is required");
-  });
-
-  it("should clear tokens on 401 response", async () => {
-    localStorage.setItem("accessToken", "expired");
-    localStorage.setItem("refreshToken", "expired");
-
-    vi.mocked(globalThis.fetch).mockResolvedValueOnce({
-      ok: false,
-      status: 401,
-      json: () => Promise.resolve({ error: "Unauthorized" }),
-    } as Response);
-
-    const { api } = await import("../api/client");
-
-    await expect(api.get("/days")).rejects.toThrow();
-    expect(localStorage.getItem("accessToken")).toBeNull();
-    expect(localStorage.getItem("refreshToken")).toBeNull();
   });
 });
