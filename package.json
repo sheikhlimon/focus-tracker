@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter client dev",
+    "dev": "pnpm --filter client dev & pnpm --filter server dev & wait",
     "dev:server": "pnpm --filter server dev",
     "build": "pnpm --filter client build && pnpm --filter server build",
     "lint": "pnpm -r lint",
