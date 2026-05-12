@@ -1,10 +1,22 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App.tsx";
 import { ThemeProvider } from "./theme/ThemeProvider.tsx";
 
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
+});
+
 function renderWithTheme(component: React.ReactElement) {
-  return render(<ThemeProvider>{component}</ThemeProvider>);
+  return render(
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>{component}</ThemeProvider>
+      </QueryClientProvider>
+    </BrowserRouter>,
+  );
 }
 
 describe("App", () => {
