@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   DndContext,
@@ -22,11 +23,14 @@ import {
   useUpdateTask,
   useDeleteTask,
   useReorderTasks,
+  useSettings,
 } from "../../api/queries";
 import type { TaskItemProps } from "./TaskItem";
 import TaskItem from "./TaskItem";
 import AddTaskInput from "./AddTaskInput";
 import PlaylistHeader from "./PlaylistHeader";
+import useTimer from "../../hooks/useTimer";
+import useNotification from "../../hooks/useNotification";
 
 function SortableTaskItem({ task, ...props }: TaskItemProps) {
   const {
@@ -56,16 +60,49 @@ export default function PlaylistView() {
   const navigate = useNavigate();
 
   const { data } = useDay(date!);
+  const { data: settings } = useSettings();
   const addTask = useAddTask(date!);
   const updateTask = useUpdateTask(date!);
   const deleteTask = useDeleteTask(date!);
   const reorderTasks = useReorderTasks(date!);
+
+  const timer = useTimer();
+  const { notify } = useNotification();
+  const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
+
+  const focusInterval = settings?.focusInterval ?? 25;
+  const notifiedAt = useRef<number | null>(null);
 
   const tasks = data?.tasks ?? [];
   const activeTasks = tasks.filter(
     (t) => t.status === "queued" || t.status === "active",
   );
   const completedTasks = tasks.filter((t) => t.status === "completed");
+
+  useEffect(() => {
+    if (!timer.isRunning || !activeTaskId) return;
+    const intervalSeconds = focusInterval * 60;
+    if (
+      timer.elapsed >= intervalSeconds &&
+      notifiedAt.current !== intervalSeconds
+    ) {
+      const task = activeTasks.find((t) => t.id === activeTaskId);
+      if (task) {
+        notify(
+          "Focus interval complete",
+          `You've been working on ${task.title} for ${focusInterval} minutes`,
+        );
+      }
+      notifiedAt.current = intervalSeconds;
+    }
+  }, [
+    timer.elapsed,
+    timer.isRunning,
+    activeTaskId,
+    focusInterval,
+    activeTasks,
+    notify,
+  ]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -88,14 +125,20 @@ export default function PlaylistView() {
 
   function handleStart(taskId: number) {
     updateTask.mutate({ taskId, body: { status: "active" } });
+    setActiveTaskId(taskId);
+    notifiedAt.current = null;
+    timer.start();
   }
 
   function handlePause(taskId: number) {
     updateTask.mutate({ taskId, body: { status: "queued" } });
+    timer.pause();
   }
 
   function handleComplete(taskId: number) {
     updateTask.mutate({ taskId, body: { status: "completed" } });
+    timer.reset();
+    setActiveTaskId(null);
   }
 
   return (
@@ -122,6 +165,9 @@ export default function PlaylistView() {
               <SortableTaskItem
                 key={task.id}
                 task={task}
+                elapsed={activeTaskId === task.id ? timer.elapsed : 0}
+                isTimerRunning={activeTaskId === task.id && timer.isRunning}
+                focusInterval={focusInterval}
                 onStart={() => handleStart(task.id)}
                 onPause={() => handlePause(task.id)}
                 onComplete={() => handleComplete(task.id)}

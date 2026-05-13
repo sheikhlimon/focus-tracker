@@ -23,10 +23,21 @@ vi.mock("../api/queries", () => ({
     },
     isLoading: false,
   }),
+  useSettings: () => ({
+    data: {
+      focusInterval: 25,
+      notificationsEnabled: true,
+      taskOverflow: "keep",
+    },
+  }),
   useAddTask: () => ({ mutate: mockAddTask }),
   useUpdateTask: () => ({ mutate: mockUpdateTask }),
   useDeleteTask: () => ({ mutate: mockDeleteTask }),
   useReorderTasks: () => ({ mutate: mockReorderTasks }),
+}));
+
+vi.mock("../hooks/useNotification", () => ({
+  default: () => ({ requestPermission: vi.fn(), notify: vi.fn() }),
 }));
 
 // Mock react-router-dom
