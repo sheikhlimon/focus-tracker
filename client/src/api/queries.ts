@@ -47,6 +47,18 @@ export function useSettings() {
   });
 }
 
+export function useUpdateSettings() {
+  const api = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: Partial<SettingsData>) => api.patch("/settings", body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["settings"] });
+    },
+  });
+}
+
 export function useAddTask(date: string) {
   const api = useApi();
   const queryClient = useQueryClient();
