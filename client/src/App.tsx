@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Link } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { Settings } from "lucide-react";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Sidebar from "./components/layout/Sidebar";
@@ -20,8 +21,21 @@ function AppShell() {
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h1 className="text-lg font-semibold">FocusTracker</h1>
-        <UserButton afterSignOutUrl="/login" />
+        <Link
+          to="/"
+          className="text-lg font-semibold hover:opacity-80 transition-opacity"
+        >
+          FocusTracker
+        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/settings"
+            className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <Settings className="size-5" />
+          </Link>
+          <UserButton afterSignOutUrl="/login" />
+        </div>
       </header>
       <div className="flex flex-1 overflow-hidden">
         <Sidebar month={month} />

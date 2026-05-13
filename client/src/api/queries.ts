@@ -77,6 +77,7 @@ export function useUpdateSettings() {
 export function useAddTask(date: string) {
   const api = useApi();
   const queryClient = useQueryClient();
+  const month = date.slice(0, 7);
 
   return useMutation({
     mutationFn: (body: { title: string }) =>
@@ -86,6 +87,7 @@ export function useAddTask(date: string) {
         if (!old) return old;
         return { ...old, tasks: [...old.tasks, newTask as DayTask] };
       });
+      queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });
 }
@@ -93,6 +95,7 @@ export function useAddTask(date: string) {
 export function useUpdateTask(date: string) {
   const api = useApi();
   const queryClient = useQueryClient();
+  const month = date.slice(0, 7);
 
   return useMutation({
     mutationFn: ({
@@ -122,6 +125,7 @@ export function useUpdateTask(date: string) {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
+      queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });
 }
@@ -129,6 +133,7 @@ export function useUpdateTask(date: string) {
 export function useDeleteTask(date: string) {
   const api = useApi();
   const queryClient = useQueryClient();
+  const month = date.slice(0, 7);
 
   return useMutation({
     mutationFn: (taskId: string) => api.delete(`/days/${date}/tasks/${taskId}`),
@@ -150,6 +155,7 @@ export function useDeleteTask(date: string) {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
+      queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });
 }
