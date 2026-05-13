@@ -16,9 +16,9 @@ vi.mock("../api/queries", () => ({
     data: {
       date: "2026-05-12",
       tasks: [
-        { id: 1, title: "Study React", status: "queued", position: 0 },
-        { id: 2, title: "Build API", status: "active", position: 1 },
-        { id: 3, title: "Write tests", status: "completed", position: 2 },
+        { id: "t1", title: "Study React", status: "queued", position: 0 },
+        { id: "t2", title: "Build API", status: "active", position: 1 },
+        { id: "t3", title: "Write tests", status: "completed", position: 2 },
       ],
     },
     isLoading: false,

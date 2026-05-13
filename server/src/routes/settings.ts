@@ -17,14 +17,11 @@ const updateSchema = z.object({
 });
 
 router.get("/", async (req: AuthRequest, res: Response) => {
-  const settings = await prisma.settings.findUnique({
+  const settings = await prisma.settings.upsert({
     where: { userId: req.userId! },
+    update: {},
+    create: { userId: req.userId! },
   });
-
-  if (!settings) {
-    res.status(404).json({ error: "Settings not found" });
-    return;
-  }
 
   res.json(settings);
 });

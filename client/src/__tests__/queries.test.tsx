@@ -176,12 +176,12 @@ describe("query hooks", () => {
         wrapper: createWrapper(),
       });
 
-      result.current.mutate({ taskId: 1, body: { status: "active" } });
+      result.current.mutate({ taskId: "t1", body: { status: "active" } });
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/days/2026-05-09/tasks/1"),
+        expect.stringContaining("/api/days/2026-05-09/tasks/t1"),
         expect.objectContaining({ method: "PATCH" }),
       );
     });
@@ -198,12 +198,12 @@ describe("query hooks", () => {
         wrapper: createWrapper(),
       });
 
-      result.current.mutate(1);
+      result.current.mutate("t1");
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/days/2026-05-09/tasks/1"),
+        expect.stringContaining("/api/days/2026-05-09/tasks/t1"),
         expect.objectContaining({ method: "DELETE" }),
       );
     });
@@ -220,7 +220,7 @@ describe("query hooks", () => {
         wrapper: createWrapper(),
       });
 
-      result.current.mutate([3, 1, 2]);
+      result.current.mutate(["t3", "t1", "t2"]);
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
@@ -228,7 +228,7 @@ describe("query hooks", () => {
         expect.stringContaining("/api/days/2026-05-09/tasks/reorder"),
         expect.objectContaining({
           method: "PATCH",
-          body: JSON.stringify({ taskIds: [3, 1, 2] }),
+          body: JSON.stringify({ taskIds: ["t3", "t1", "t2"] }),
         }),
       );
     });

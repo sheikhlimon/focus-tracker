@@ -68,7 +68,7 @@ export default function PlaylistView() {
 
   const timer = useTimer();
   const { notify } = useNotification();
-  const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   const focusInterval = settings?.focusInterval ?? 25;
   const notifiedAt = useRef<number | null>(null);
@@ -123,19 +123,19 @@ export default function PlaylistView() {
     reorderTasks.mutate(reordered.map((t) => t.id));
   }
 
-  function handleStart(taskId: number) {
+  function handleStart(taskId: string) {
     updateTask.mutate({ taskId, body: { status: "active" } });
     setActiveTaskId(taskId);
     notifiedAt.current = null;
     timer.start();
   }
 
-  function handlePause(taskId: number) {
+  function handlePause(taskId: string) {
     updateTask.mutate({ taskId, body: { status: "queued" } });
     timer.pause();
   }
 
-  function handleComplete(taskId: number) {
+  function handleComplete(taskId: string) {
     updateTask.mutate({ taskId, body: { status: "completed" } });
     timer.reset();
     setActiveTaskId(null);

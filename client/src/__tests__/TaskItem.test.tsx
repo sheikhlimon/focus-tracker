@@ -5,7 +5,7 @@ import TaskItem, { type TaskItemProps } from "../components/playlist/TaskItem";
 
 function createTask(overrides: Partial<TaskItemProps["task"]> = {}) {
   return {
-    id: 1,
+    id: "t1",
     title: "Study React patterns",
     status: "queued" as TaskItemProps["task"]["status"],
     position: 0,

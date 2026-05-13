@@ -2,7 +2,7 @@ import { GripVertical, Play, Pause, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Task {
-  id: number;
+  id: string;
   title: string;
   status: "queued" | "active" | "completed";
   position: number;

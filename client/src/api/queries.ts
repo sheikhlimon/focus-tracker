@@ -10,7 +10,7 @@ interface MonthDay {
 interface DayData {
   date: string;
   tasks: {
-    id: number;
+    id: string;
     title: string;
     status: "queued" | "active" | "completed";
     position: number;
@@ -69,7 +69,7 @@ export function useUpdateTask(date: string) {
       taskId,
       body,
     }: {
-      taskId: number;
+      taskId: string;
       body: { title?: string; status?: string };
     }) => api.patch(`/days/${date}/tasks/${taskId}`, body),
     onSuccess: () => {
@@ -83,7 +83,7 @@ export function useDeleteTask(date: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (taskId: number) => api.delete(`/days/${date}/tasks/${taskId}`),
+    mutationFn: (taskId: string) => api.delete(`/days/${date}/tasks/${taskId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
     },
@@ -95,7 +95,7 @@ export function useReorderTasks(date: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (taskIds: number[]) =>
+    mutationFn: (taskIds: string[]) =>
       api.patch(`/days/${date}/tasks/reorder`, { taskIds }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
