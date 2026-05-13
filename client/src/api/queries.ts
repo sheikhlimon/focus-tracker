@@ -7,14 +7,16 @@ interface MonthDay {
   totalMinutes?: number;
 }
 
+interface DayTask {
+  id: string;
+  title: string;
+  status: "queued" | "active" | "completed";
+  position: number;
+}
+
 interface DayData {
   date: string;
-  tasks: {
-    id: string;
-    title: string;
-    status: "queued" | "active" | "completed";
-    position: number;
-  }[];
+  tasks: DayTask[];
 }
 
 interface SettingsData {
@@ -53,7 +55,20 @@ export function useUpdateSettings() {
 
   return useMutation({
     mutationFn: (body: Partial<SettingsData>) => api.patch("/settings", body),
-    onSuccess: () => {
+    onMutate: async (body) => {
+      await queryClient.cancelQueries({ queryKey: ["settings"] });
+      const previous = queryClient.getQueryData<SettingsData>(["settings"]);
+      if (previous) {
+        queryClient.setQueryData(["settings"], { ...previous, ...body });
+      }
+      return { previous };
+    },
+    onError: (_err, _body, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["settings"], context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
     },
   });
@@ -66,8 +81,11 @@ export function useAddTask(date: string) {
   return useMutation({
     mutationFn: (body: { title: string }) =>
       api.post(`/days/${date}/tasks`, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["day", date] });
+    onSuccess: (newTask) => {
+      queryClient.setQueryData<DayData>(["day", date], (old) => {
+        if (!old) return old;
+        return { ...old, tasks: [...old.tasks, newTask as DayTask] };
+      });
     },
   });
 }
@@ -84,7 +102,25 @@ export function useUpdateTask(date: string) {
       taskId: string;
       body: { title?: string; status?: string };
     }) => api.patch(`/days/${date}/tasks/${taskId}`, body),
-    onSuccess: () => {
+    onMutate: async ({ taskId, body }) => {
+      await queryClient.cancelQueries({ queryKey: ["day", date] });
+      const previous = queryClient.getQueryData<DayData>(["day", date]);
+      if (previous) {
+        queryClient.setQueryData<DayData>(["day", date], {
+          ...previous,
+          tasks: previous.tasks.map((t) =>
+            t.id === taskId ? ({ ...t, ...body } as DayTask) : t,
+          ),
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["day", date], context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
     },
   });
@@ -96,7 +132,23 @@ export function useDeleteTask(date: string) {
 
   return useMutation({
     mutationFn: (taskId: string) => api.delete(`/days/${date}/tasks/${taskId}`),
-    onSuccess: () => {
+    onMutate: async (taskId) => {
+      await queryClient.cancelQueries({ queryKey: ["day", date] });
+      const previous = queryClient.getQueryData<DayData>(["day", date]);
+      if (previous) {
+        queryClient.setQueryData<DayData>(["day", date], {
+          ...previous,
+          tasks: previous.tasks.filter((t) => t.id !== taskId),
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["day", date], context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
     },
   });
