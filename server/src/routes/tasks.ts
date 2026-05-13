@@ -25,8 +25,12 @@ const reorderSchema = z.object({
 async function getDayId(userId: string, date: string) {
   const [y, m, d] = date.split("-").map(Number);
   const dayDate = new Date(Date.UTC(y, m - 1, d));
-  const day = await prisma.day.findFirst({ where: { date: dayDate, userId } });
-  return day?.id;
+  const day = await prisma.day.upsert({
+    where: { date_userId: { date: dayDate, userId } },
+    update: {},
+    create: { date: dayDate, userId },
+  });
+  return day.id;
 }
 
 router.post(

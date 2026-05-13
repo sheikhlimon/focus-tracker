@@ -14,14 +14,23 @@ router.get("/", async (req: AuthRequest, res: Response) => {
   }
 
   const days = await daysService.getDaysByMonth(req.userId!, month);
-  res.json(days);
+  res.json({
+    days: days.map((d) => ({
+      date: d.date.toISOString().slice(0, 10),
+      taskCount: d.tasks.length,
+    })),
+  });
 });
 
 router.get(
   "/:date",
   async (req: AuthRequest<{ date: string }>, res: Response) => {
     const day = await daysService.getDayByDate(req.userId!, req.params.date);
-    res.json(day);
+    res.json({
+      ...day,
+      date: day.date.toISOString().slice(0, 10),
+      tasks: day.tasks.map((t) => ({ ...t })),
+    });
   },
 );
 

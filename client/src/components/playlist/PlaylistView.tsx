@@ -79,6 +79,15 @@ export default function PlaylistView() {
   );
   const completedTasks = tasks.filter((t) => t.status === "completed");
 
+  const runningTask = activeTasks.find((t) => t.status === "active");
+
+  useEffect(() => {
+    if (runningTask && !activeTaskId && !timer.isRunning) {
+      setActiveTaskId(runningTask.id);
+      timer.start();
+    }
+  }, [runningTask?.id, activeTaskId, timer.isRunning]);
+
   useEffect(() => {
     if (!timer.isRunning || !activeTaskId) return;
     const intervalSeconds = focusInterval * 60;

@@ -44,7 +44,7 @@ export default function TaskItem({
   return (
     <div
       className={cn(
-        "group relative flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 overflow-hidden",
+        "group relative flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition-all duration-200 overflow-hidden",
         isActive && "bg-primary/8 shadow-sm ring-1 ring-primary/20",
         isCompleted && "opacity-50",
         !isActive && !isCompleted && "hover:bg-muted/50",
@@ -58,27 +58,27 @@ export default function TaskItem({
       )}
       <div
         aria-label="Drag to reorder"
-        className="cursor-grab text-muted-foreground/30 hover:text-muted-foreground active:cursor-grabbing"
+        className="relative flex-shrink-0 cursor-grab p-0.5 text-muted-foreground/30 hover:text-muted-foreground active:cursor-grabbing"
       >
         <GripVertical className="size-4" />
       </div>
 
       <span
         className={cn(
-          "relative flex-1 text-sm font-medium",
+          "relative min-w-0 flex-1 truncate text-sm font-medium",
           isCompleted && "line-through text-muted-foreground",
         )}
       >
         {task.title}
       </span>
 
-      {isActive && elapsed > 0 && (
-        <span className="relative tabular-nums text-xs text-muted-foreground">
+      {isActive && (
+        <span className="relative flex-shrink-0 tabular-nums text-xs text-muted-foreground">
           {formatTime(elapsed)}
         </span>
       )}
 
-      <div className="flex items-center gap-1">
+      <div className="relative flex flex-shrink-0 items-center gap-0.5">
         {task.status === "queued" && (
           <button
             onClick={onStart}
