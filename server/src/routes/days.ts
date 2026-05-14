@@ -15,7 +15,7 @@ router.get("/", async (req: AuthRequest, res: Response) => {
 
   const days = await daysService.getDaysByMonth(req.userId!, month);
   res.json({
-    days: days.map((d) => ({
+    days: days.map((d: (typeof days)[number]) => ({
       date: d.date.toISOString().slice(0, 10),
       taskCount: d.tasks.length,
     })),
@@ -29,7 +29,7 @@ router.get(
     res.json({
       ...day,
       date: day.date.toISOString().slice(0, 10),
-      tasks: day.tasks.map((t) => ({ ...t })),
+      tasks: day.tasks.map((t: (typeof day.tasks)[number]) => ({ ...t })),
     });
   },
 );

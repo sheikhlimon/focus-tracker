@@ -59,6 +59,7 @@ server/              # Express backend
 - Service error returns: use `status: 409 as number` to satisfy Express's `res.status()` type
 - No `declaration: true` in tsconfig — this is an app, not a library
 - `tsc --noEmit` runs in `.husky/pre-commit` (not lint-staged) — it checks the whole project, not just staged files
+- Always type callback parameters in `.map()`, `.filter()`, `.find()` etc. — `strict: true` forbids implicit `any`. Use `typeof array[number]` for Prisma return types (e.g., `.map((d: typeof days[number]) => ...)`)
 
 ## Testing
 

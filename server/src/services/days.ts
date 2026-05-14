@@ -20,7 +20,8 @@ async function applyRollover(userId: string, todayDate: Date) {
   if (!yesterdayDay) return;
 
   const incompleteTasks = yesterdayDay.tasks.filter(
-    (t) => t.status === "queued" || t.status === "active",
+    (t: (typeof yesterdayDay.tasks)[number]) =>
+      t.status === "queued" || t.status === "active",
   );
 
   if (incompleteTasks.length === 0) return;
@@ -75,7 +76,7 @@ async function applyAutoPopulate(userId: string, dayId: string) {
       where: { dayId },
       select: { title: true },
     })
-  ).map((t) => t.title);
+  ).map((t: { title: string }) => t.title);
 
   let position = rolloverTitles.length;
 
