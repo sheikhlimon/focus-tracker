@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm --filter client dev & pnpm --filter server dev & wait",
     "dev:server": "pnpm --filter server dev",
-    "build": "pnpm --filter server exec prisma generate && pnpm --filter client build && pnpm --filter server build && esbuild api/_index.ts --bundle --platform=node --target=node24 --external:@prisma/client --outfile=api/index.js",
+    "build": "pnpm --filter server exec prisma generate && pnpm --filter client build && pnpm --filter server build && esbuild api/index.ts --bundle --platform=node --target=node22 --external:@prisma/client --external:@prisma/engines --outfile=api/index.js",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "test": "pnpm -r test",
