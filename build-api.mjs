@@ -5,7 +5,7 @@ await build({
   bundle: true,
   platform: "node",
   target: "node22",
-  outfile: "api/index.js",
+  outfile: "api/index.cjs",
   external: ["@prisma/client", "@prisma/engines"],
   format: "cjs",
 });
