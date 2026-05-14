@@ -6,6 +6,8 @@ This file defines the standards and conventions for this project. Treat it as au
 
 - **Tech Stack**: React 19, TypeScript, Vite, Tailwind CSS, Express.js, Prisma, PostgreSQL, React Query, @dnd-kit
 - **Package Manager**: pnpm (workspaces)
+- **Linting**: oxlint (replaces ESLint)
+- **Formatting**: oxfmt (replaces Prettier)
 - **Methodology**: Test-Driven Development (TDD) - write tests first, then implement features
 - **See CLAUDE.md** for project context, design spec, and implementation plan locations
 
@@ -46,6 +48,18 @@ server/              # Express backend
 - Use cn() for conditional class merging
 - No inline styles, use Tailwind classes
 
+## TypeScript Rules
+
+- Never use `any` type — use proper interfaces instead
+- Define `AuthRequest<P>` generic interface in `middleware/auth.ts` with `userId` — route handlers specify params: `AuthRequest<{ date: string }>`
+- For nested routers with `mergeParams: true`, destructure params inside handler: `const { taskId, date } = req.params`
+- Use array index access (`parts[0]`) instead of destructuring when TypeScript can't infer the type (e.g., `.split()` results)
+- Always register `errorHandler` middleware in `createApp()` after all routes
+- Dates: always use `Date.UTC()` to avoid timezone bugs — never use `new Date("YYYY-MM-DD")` or `new Date(year, month, day)`
+- Service error returns: use `status: 409 as number` to satisfy Express's `res.status()` type
+- No `declaration: true` in tsconfig — this is an app, not a library
+- `tsc --noEmit` runs in `.husky/pre-commit` (not lint-staged) — it checks the whole project, not just staged files
+
 ## Testing
 
 - Client: Vitest with React Testing Library
@@ -60,14 +74,15 @@ server/              # Express backend
 - `pnpm dev`: Start client dev server
 - `pnpm dev:server`: Start server dev server
 - `pnpm build`: Build for production
-- `pnpm lint`: Run ESLint
+- `pnpm lint`: Run oxlint
+- `pnpm format`: Run oxfmt
 - `pnpm test`: Run all tests
 
 ## Git
 
 - Use conventional commits (e.g., `feat: add delete task`)
 - One logical change per commit
-- Pre-commit hooks via Husky: Lint and format code
+- Pre-commit hooks via Husky: oxlint + oxfmt via lint-staged
 - `prepare: "husky || true"` for CI/CD compatibility
 
 ## Anti-Patterns (Avoid AI-Generated Look)
