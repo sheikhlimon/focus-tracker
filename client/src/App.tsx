@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, Link } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
-import { Settings } from "lucide-react";
+import { Settings, Target } from "lucide-react";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Sidebar from "./components/layout/Sidebar";
@@ -23,8 +23,9 @@ function AppShell() {
       <header className="flex items-center justify-between bg-muted/50 px-5 py-4">
         <Link
           to="/"
-          className="text-sm font-medium tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-2 text-base font-semibold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
         >
+          <Target className="size-5" />
           FocusTracker
         </Link>
         <div className="flex items-center gap-2">
