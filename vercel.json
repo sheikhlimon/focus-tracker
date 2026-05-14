@@ -1,11 +1,11 @@
 {
   "buildCommand": "pnpm build",
   "outputDirectory": "client/dist",
-  "installCommand": "pnpm install --node-linker hoisted",
+  "installCommand": "pnpm install",
   "framework": null,
   "functions": {
     "api/index.ts": {
-      "includeFiles": "server/src/**"
+      "includeFiles": "server/src/** server/prisma/**"
     }
   },
   "rewrites": [
