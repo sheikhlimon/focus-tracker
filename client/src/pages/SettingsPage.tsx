@@ -68,7 +68,7 @@ export default function SettingsPage() {
           }`}
         >
           <span
-            className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+            className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-card shadow-sm transition-transform ${
               settings.notificationsEnabled ? "translate-x-5" : "translate-x-0"
             }`}
           />

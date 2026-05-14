@@ -30,6 +30,7 @@ export default function Sidebar({ month }: SidebarProps) {
               date={d.date}
               taskCount={d.taskCount}
               isToday
+              showDayName
             />
           ))}
         </section>
@@ -42,7 +43,12 @@ export default function Sidebar({ month }: SidebarProps) {
           </h3>
           <div className="space-y-1">
             {upcoming.map((d) => (
-              <DateCard key={d.date} date={d.date} taskCount={d.taskCount} />
+              <DateCard
+                key={d.date}
+                date={d.date}
+                taskCount={d.taskCount}
+                showDayName
+              />
             ))}
           </div>
         </section>
@@ -55,7 +61,12 @@ export default function Sidebar({ month }: SidebarProps) {
           </h3>
           <div className="space-y-1 opacity-60">
             {past.map((d) => (
-              <DateCard key={d.date} date={d.date} taskCount={d.taskCount} />
+              <DateCard
+                key={d.date}
+                date={d.date}
+                taskCount={d.taskCount}
+                showDayName
+              />
             ))}
           </div>
         </section>

@@ -83,7 +83,7 @@ export default function TaskItem({
           <button
             onClick={onStart}
             aria-label="Start task"
-            className="rounded-lg p-1.5 text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer"
           >
             <Play className="size-4" />
           </button>
@@ -94,21 +94,21 @@ export default function TaskItem({
             <button
               onClick={onPause}
               aria-label="Pause task"
-              className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted active:bg-muted/80 transition-colors cursor-pointer"
             >
               <Pause className="size-4" />
             </button>
             <button
               onClick={onComplete}
               aria-label="Complete task"
-              className="rounded-lg p-1.5 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-green-600 hover:bg-green-500/10 active:bg-green-500/20 dark:text-green-400 dark:hover:bg-green-500/15 transition-colors cursor-pointer"
             >
               <Check className="size-4" />
             </button>
             <button
               onClick={onDelete}
               aria-label="Delete task"
-              className="rounded-lg p-1.5 text-destructive/60 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-destructive/60 hover:bg-destructive/10 hover:text-destructive active:bg-destructive/20 transition-colors cursor-pointer"
             >
               <X className="size-4" />
             </button>
@@ -119,7 +119,7 @@ export default function TaskItem({
           <button
             onClick={onDelete}
             aria-label="Delete task"
-            className="rounded-lg p-1.5 text-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-destructive/40 hover:bg-destructive/10 hover:text-destructive active:bg-destructive/20 transition-colors cursor-pointer"
           >
             <X className="size-4" />
           </button>

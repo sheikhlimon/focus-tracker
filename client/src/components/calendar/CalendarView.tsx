@@ -18,7 +18,7 @@ export default function CalendarView({ month }: CalendarViewProps) {
       <div className="flex items-center justify-center gap-1">
         <button
           onClick={prevMonth}
-          className="rounded-md p-1 hover:bg-accent cursor-pointer"
+          className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground active:bg-muted/80 transition-colors cursor-pointer"
         >
           <ChevronLeft className="size-5" />
         </button>
@@ -27,7 +27,7 @@ export default function CalendarView({ month }: CalendarViewProps) {
         </h2>
         <button
           onClick={nextMonth}
-          className="rounded-md p-1 hover:bg-accent cursor-pointer"
+          className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground active:bg-muted/80 transition-colors cursor-pointer"
         >
           <ChevronRight className="size-5" />
         </button>

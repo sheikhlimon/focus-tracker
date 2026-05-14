@@ -7,9 +7,15 @@
       "Bash(curl -s \"https://unpkg.com/browse/@clerk/backend@3.4.7/jwt/\")",
       "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/src/jwt/index.ts\")",
       "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/src/tokens/verify.ts\")",
-      "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/dist/index.d.ts\")"
+      "Bash(curl -s \"https://raw.githubusercontent.com/clerk/javascript/main/packages/backend/dist/index.d.ts\")",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_network_request"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["fetch"]
+  "enabledMcpjsonServers": [
+    "fetch"
+  ]
 }
