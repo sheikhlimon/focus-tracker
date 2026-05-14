@@ -12,6 +12,7 @@ const updateSchema = z.object({
   focusInterval: z.number().int().min(1).max(120).optional(),
   notificationsEnabled: z.boolean().optional(),
   taskOverflow: z.enum(["keep", "drop", "carry"]).optional(),
+  autoPopulate: z.boolean().optional(),
   theme: z.enum(["light", "dark", "system"]).optional(),
   weekStartsOn: z.enum(["monday", "sunday"]).optional(),
 });
