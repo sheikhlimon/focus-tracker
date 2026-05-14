@@ -29,17 +29,13 @@ export default function useTimer() {
     setIsRunning(false);
   }, [clear]);
 
-  const resume = useCallback(
-    (initialSeconds = 0) => {
-      clear();
-      setElapsed(initialSeconds);
-      setIsRunning(true);
-      intervalRef.current = setInterval(() => {
-        setElapsed((prev) => prev + 1);
-      }, 1000);
-    },
-    [clear],
-  );
+  const resume = useCallback(() => {
+    clear();
+    setIsRunning(true);
+    intervalRef.current = setInterval(() => {
+      setElapsed((prev) => prev + 1);
+    }, 1000);
+  }, [clear]);
 
   const reset = useCallback(() => {
     clear();

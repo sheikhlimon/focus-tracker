@@ -2,16 +2,21 @@ import { useRef } from "react";
 import { Plus } from "lucide-react";
 
 interface AddTaskInputProps {
-  onAdd: (title: string) => void;
+  onAdd: (title: string, durationMin: number) => void;
+  defaultDuration: number;
 }
 
-export default function AddTaskInput({ onAdd }: AddTaskInputProps) {
+export default function AddTaskInput({
+  onAdd,
+  defaultDuration,
+}: AddTaskInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(formData: FormData) {
     const trimmed = (formData.get("title") as string).trim();
     if (!trimmed) return;
-    onAdd(trimmed);
+    const duration = Number(formData.get("duration")) || defaultDuration;
+    onAdd(trimmed, duration);
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -23,6 +28,14 @@ export default function AddTaskInput({ onAdd }: AddTaskInputProps) {
         name="title"
         placeholder="Add a task..."
         className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring transition-all"
+      />
+      <input
+        type="number"
+        name="duration"
+        defaultValue={defaultDuration}
+        min={1}
+        max={480}
+        className="w-16 rounded-lg border border-input bg-background px-2 py-2 text-sm text-center text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring transition-all"
       />
       <button
         type="submit"

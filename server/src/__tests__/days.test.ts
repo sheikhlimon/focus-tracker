@@ -17,6 +17,7 @@ describe("Days routes", () => {
   beforeEach(async () => {
     await prisma.session.deleteMany();
     await prisma.task.deleteMany();
+    await prisma.taskTemplate.deleteMany();
     await prisma.day.deleteMany();
     await prisma.settings.deleteMany();
     await prisma.user.deleteMany();
@@ -49,8 +50,8 @@ describe("Days routes", () => {
         .set(headers);
 
       expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(1);
-      expect(res.body[0].tasks).toHaveLength(2);
+      expect(res.body.days).toHaveLength(1);
+      expect(res.body.days[0].taskCount).toBe(2);
     });
 
     it("should return empty array for month with no days", async () => {
@@ -59,7 +60,7 @@ describe("Days routes", () => {
         .set(headers);
 
       expect(res.status).toBe(200);
-      expect(res.body).toEqual([]);
+      expect(res.body.days).toEqual([]);
     });
 
     it("should reject without auth", async () => {

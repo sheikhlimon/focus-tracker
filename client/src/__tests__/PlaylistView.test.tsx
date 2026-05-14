@@ -16,9 +16,36 @@ vi.mock("../api/queries", () => ({
     data: {
       date: "2026-05-12",
       tasks: [
-        { id: "t1", title: "Study React", status: "queued", position: 0 },
-        { id: "t2", title: "Build API", status: "active", position: 1 },
-        { id: "t3", title: "Write tests", status: "completed", position: 2 },
+        {
+          id: "t1",
+          title: "Study React",
+          status: "queued",
+          position: 0,
+          url: null,
+          durationMin: 25,
+          session: "day",
+          sessions: [],
+        },
+        {
+          id: "t2",
+          title: "Build API",
+          status: "active",
+          position: 1,
+          url: null,
+          durationMin: 25,
+          session: "day",
+          sessions: [],
+        },
+        {
+          id: "t3",
+          title: "Write tests",
+          status: "completed",
+          position: 2,
+          url: null,
+          durationMin: 25,
+          session: "day",
+          sessions: [],
+        },
       ],
     },
     isLoading: false,
@@ -28,6 +55,7 @@ vi.mock("../api/queries", () => ({
       focusInterval: 25,
       notificationsEnabled: true,
       taskOverflow: "keep",
+      autoPopulate: true,
     },
   }),
   useAddTask: () => ({ mutate: mockAddTask }),
@@ -87,7 +115,10 @@ describe("PlaylistView", () => {
       screen.getByPlaceholderText("Add a task..."),
       "New task{Enter}",
     );
-    expect(mockAddTask).toHaveBeenCalledWith({ title: "New task" });
+    expect(mockAddTask).toHaveBeenCalledWith({
+      title: "New task",
+      durationMin: 25,
+    });
   });
 
   it("should navigate back to calendar on back click", async () => {

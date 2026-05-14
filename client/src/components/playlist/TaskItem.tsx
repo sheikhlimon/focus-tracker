@@ -1,4 +1,11 @@
-import { GripVertical, Play, Pause, Check, X } from "lucide-react";
+import {
+  GripVertical,
+  Play,
+  Pause,
+  Check,
+  X,
+  ExternalLink,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Task {
@@ -6,6 +13,9 @@ export interface Task {
   title: string;
   status: "queued" | "active" | "completed";
   position: number;
+  url: string | null;
+  durationMin: number;
+  session: "day" | "night";
 }
 
 export interface TaskItemProps {
@@ -28,7 +38,6 @@ function formatTime(seconds: number): string {
 export default function TaskItem({
   task,
   elapsed = 0,
-  focusInterval = 25,
   onStart,
   onPause,
   onComplete,
@@ -36,7 +45,7 @@ export default function TaskItem({
 }: TaskItemProps) {
   const isActive = task.status === "active";
   const isCompleted = task.status === "completed";
-  const intervalSeconds = focusInterval * 60;
+  const intervalSeconds = task.durationMin * 60;
   const progress = isActive
     ? Math.min((elapsed / intervalSeconds) * 100, 100)
     : 0;
@@ -71,6 +80,18 @@ export default function TaskItem({
       >
         {task.title}
       </span>
+
+      {task.url && (
+        <a
+          href={task.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="relative flex-shrink-0 text-muted-foreground/40 hover:text-foreground transition-colors"
+        >
+          <ExternalLink className="size-3.5" />
+        </a>
+      )}
 
       {isActive && (
         <span className="relative flex-shrink-0 tabular-nums text-xs text-muted-foreground">

@@ -9,6 +9,9 @@ function createTask(overrides: Partial<TaskItemProps["task"]> = {}) {
     title: "Study React patterns",
     status: "queued" as TaskItemProps["task"]["status"],
     position: 0,
+    url: null,
+    durationMin: 25,
+    session: "day" as const,
     ...overrides,
   };
 }

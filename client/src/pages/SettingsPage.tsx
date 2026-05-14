@@ -1,4 +1,5 @@
 import { useSettings, useUpdateSettings } from "../api/queries";
+import TemplateEditor from "../components/settings/TemplateEditor";
 
 const INTERVAL_CHIPS = [10, 25, 45];
 
@@ -19,11 +20,13 @@ export default function SettingsPage() {
       <h2 className="text-xl font-semibold tracking-tight">Settings</h2>
 
       <section className="space-y-3">
-        <label className="block text-sm font-medium">Focus interval</label>
+        <label className="block text-sm font-medium">
+          Default task duration
+        </label>
         <div className="flex items-center gap-3">
           <input
             type="number"
-            aria-label="Focus interval"
+            aria-label="Default task duration"
             value={settings.focusInterval}
             onChange={(e) => handleIntervalChange(Number(e.target.value))}
             min={1}
@@ -78,7 +81,7 @@ export default function SettingsPage() {
       <section className="space-y-3">
         <label className="block text-sm font-medium">Task overflow</label>
         <div className="flex gap-2">
-          {(["keep", "rollover"] as const).map((option) => (
+          {(["keep", "carry"] as const).map((option) => (
             <button
               key={option}
               onClick={() => updateSettings.mutate({ taskOverflow: option })}
@@ -92,6 +95,37 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Auto-populate new days</label>
+          <button
+            aria-label="Auto-populate"
+            role="switch"
+            aria-checked={settings.autoPopulate}
+            onClick={() =>
+              updateSettings.mutate({ autoPopulate: !settings.autoPopulate })
+            }
+            className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer ${
+              settings.autoPopulate ? "bg-primary" : "bg-muted"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-card shadow-sm transition-transform ${
+                settings.autoPopulate ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          When enabled, new days are pre-filled from your daily schedule.
+        </p>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold tracking-tight">Daily Schedule</h2>
+        <TemplateEditor />
       </section>
     </div>
   );

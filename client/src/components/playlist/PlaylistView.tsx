@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   DndContext,
   closestCenter,
-  KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
@@ -11,7 +10,6 @@ import {
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   arrayMove,
   useSortable,
@@ -66,6 +64,80 @@ function SortableTaskItem({
   );
 }
 
+function TaskGroup({
+  label,
+  tasks,
+  activeTaskId,
+  timerElapsed,
+  timerIsRunning,
+  onStart,
+  onPause,
+  onComplete,
+  onDelete,
+  onReorder,
+}: {
+  label: string;
+  tasks: TaskItemProps["task"][];
+  activeTaskId: string | null;
+  timerElapsed: number;
+  timerIsRunning: boolean;
+  onStart: (id: string) => void;
+  onPause: (id: string) => void;
+  onComplete: (id: string) => void;
+  onDelete: (id: string) => void;
+  onReorder: (ids: string[]) => void;
+}) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = tasks.findIndex((t) => t.id === active.id);
+    const newIndex = tasks.findIndex((t) => t.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(tasks, oldIndex, newIndex);
+    onReorder(reordered.map((t) => t.id));
+  }
+
+  if (tasks.length === 0) return null;
+
+  return (
+    <div className="space-y-1">
+      <p className="px-3 pb-1 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+        {label}
+      </p>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={tasks.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {tasks.map((task, i) => (
+            <SortableTaskItem
+              key={task.id}
+              task={task}
+              index={i}
+              elapsed={activeTaskId === task.id ? timerElapsed : 0}
+              isTimerRunning={activeTaskId === task.id && timerIsRunning}
+              onStart={() => onStart(task.id)}
+              onPause={() => onPause(task.id)}
+              onComplete={() => onComplete(task.id)}
+              onDelete={() => onDelete(task.id)}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
+    </div>
+  );
+}
+
 export default function PlaylistView() {
   const { date } = useParams<{ date: string }>();
   const navigate = useNavigate();
@@ -90,6 +162,9 @@ export default function PlaylistView() {
   );
   const completedTasks = tasks.filter((t) => t.status === "completed");
 
+  const dayTasks = activeTasks.filter((t) => t.session === "day");
+  const nightTasks = activeTasks.filter((t) => t.session === "night");
+
   const runningTask = activeTasks.find((t) => t.status === "active");
 
   function getSessionElapsed(task: (typeof tasks)[number]): number {
@@ -109,9 +184,13 @@ export default function PlaylistView() {
     }
   }, [runningTask?.id, activeTaskId, timer.isRunning]);
 
+  const activeDuration = activeTasks.find(
+    (t) => t.id === activeTaskId,
+  )?.durationMin;
+
   useEffect(() => {
     if (!timer.isRunning || !activeTaskId) return;
-    const intervalSeconds = focusInterval * 60;
+    const intervalSeconds = (activeDuration ?? focusInterval) * 60;
     if (
       timer.elapsed >= intervalSeconds &&
       notifiedAt.current !== intervalSeconds
@@ -120,7 +199,7 @@ export default function PlaylistView() {
       if (task) {
         notify(
           "Focus interval complete",
-          `You've been working on ${task.title} for ${focusInterval} minutes`,
+          `You've been working on ${task.title} for ${task.durationMin} minutes`,
         );
       }
       notifiedAt.current = intervalSeconds;
@@ -130,29 +209,11 @@ export default function PlaylistView() {
     timer.elapsed,
     timer.isRunning,
     activeTaskId,
+    activeDuration,
     focusInterval,
     activeTasks,
     notify,
   ]);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = activeTasks.findIndex((t) => t.id === active.id);
-    const newIndex = activeTasks.findIndex((t) => t.id === over.id);
-    if (oldIndex === -1 || newIndex === -1) return;
-
-    const reordered = arrayMove(activeTasks, oldIndex, newIndex);
-    reorderTasks.mutate(reordered.map((t) => t.id));
-  }
 
   function handleStart(taskId: string) {
     updateTask.mutate({ taskId, body: { status: "active" } });
@@ -180,35 +241,40 @@ export default function PlaylistView() {
         onBack={() => navigate("/")}
       />
 
-      <AddTaskInput onAdd={(title) => addTask.mutate({ title })} />
+      <AddTaskInput
+        defaultDuration={focusInterval}
+        onAdd={(title, durationMin) => addTask.mutate({ title, durationMin })}
+      />
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={activeTasks.map((t) => t.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          <div className="space-y-1">
-            {activeTasks.map((task, i) => (
-              <SortableTaskItem
-                key={task.id}
-                task={task}
-                index={i}
-                elapsed={activeTaskId === task.id ? timer.elapsed : 0}
-                isTimerRunning={activeTaskId === task.id && timer.isRunning}
-                focusInterval={focusInterval}
-                onStart={() => handleStart(task.id)}
-                onPause={() => handlePause(task.id)}
-                onComplete={() => handleComplete(task.id)}
-                onDelete={() => deleteTask.mutate(task.id)}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      <TaskGroup
+        label="Day"
+        tasks={dayTasks}
+        activeTaskId={activeTaskId}
+        timerElapsed={timer.elapsed}
+        timerIsRunning={timer.isRunning}
+        onStart={handleStart}
+        onPause={handlePause}
+        onComplete={handleComplete}
+        onDelete={(id) => deleteTask.mutate(id)}
+        onReorder={(ids) => reorderTasks.mutate(ids)}
+      />
+
+      {nightTasks.length > 0 && (
+        <div className="pt-4">
+          <TaskGroup
+            label="Night"
+            tasks={nightTasks}
+            activeTaskId={activeTaskId}
+            timerElapsed={timer.elapsed}
+            timerIsRunning={timer.isRunning}
+            onStart={handleStart}
+            onPause={handlePause}
+            onComplete={handleComplete}
+            onDelete={(id) => deleteTask.mutate(id)}
+            onReorder={(ids) => reorderTasks.mutate(ids)}
+          />
+        </div>
+      )}
 
       {completedTasks.length > 0 && (
         <div className="space-y-1 pt-6 border-t border-border/50">

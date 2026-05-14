@@ -13,9 +13,15 @@ vi.mock("../api/queries", () => ({
       focusInterval: 25,
       notificationsEnabled: true,
       taskOverflow: "keep",
+      autoPopulate: true,
     },
   }),
   useUpdateSettings: () => ({ mutate: mockMutate }),
+  useTemplates: () => ({ data: { templates: [] } }),
+  useAddTemplate: () => ({ mutate: vi.fn() }),
+  useUpdateTemplate: () => ({ mutate: vi.fn() }),
+  useDeleteTemplate: () => ({ mutate: vi.fn() }),
+  useReorderTemplates: () => ({ mutate: vi.fn() }),
 }));
 
 function wrapper({ children }: { children: ReactNode }) {
@@ -30,7 +36,7 @@ function wrapper({ children }: { children: ReactNode }) {
 describe("SettingsPage", () => {
   it("should render focus interval with current value", () => {
     render(<SettingsPage />, { wrapper });
-    expect(screen.getByLabelText("Focus interval")).toHaveValue(25);
+    expect(screen.getByLabelText("Default task duration")).toHaveValue(25);
   });
 
   it("should render notification toggle", () => {
@@ -48,7 +54,7 @@ describe("SettingsPage", () => {
   it("should call mutate when focus interval input changes", () => {
     render(<SettingsPage />, { wrapper });
 
-    const input = screen.getByLabelText("Focus interval");
+    const input = screen.getByLabelText("Default task duration");
     fireEvent.change(input, { target: { value: "30" } });
 
     expect(mockMutate).toHaveBeenCalledWith({ focusInterval: 30 });
