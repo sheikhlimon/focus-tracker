@@ -1,23 +1,30 @@
-# Daily Tasks App
+# FocusTracker
 
-A modern, responsive daily tasks app built with React, TypeScript, and Tailwind CSS. Follows Test-Driven Development (TDD) practices, features a clean design, and includes a light/dark mode toggle.
+Full-stack focus session tracker with calendar navigation, Pomodoro-style timers, drag-and-drop task reordering, and multi-user auth.
 
 ## Features
 
-- ✅ Add, toggle, and delete tasks
-- 📱 Responsive design (mobile-friendly)
-- 🧪 Full test coverage with Vitest
-- 🌙 Light/Dark mode toggle
+- Calendar view with month navigation and per-day task counts
+- Day view with drag-and-drop task reordering
+- Per-task timers with focus interval notifications
+- Day/Night session grouping for tasks
+- Task templates with auto-populate
+- Settings page (focus interval, notifications, overflow behavior)
+- Light/Dark mode
+- Multi-user auth via Clerk
+- Optimistic updates with React Query
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS
-- **Build**: Vite
-- **Testing**: Vitest, React Testing Library
-- **Icons**: Lucide React
-- **Linting**: ESLint, Prettier
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, React Query, @dnd-kit
+- **Backend**: Express.js, Prisma, PostgreSQL
+- **Auth**: Clerk
+- **Testing**: Vitest, React Testing Library (client), Supertest (server)
+- **Linting/Formatting**: oxlint, oxfmt
+- **Package Manager**: pnpm workspaces
+- **Deployment**: Vercel (serverless functions + static client)
 
-## Installation
+## Getting Started
 
 1. Clone the repo:
 
@@ -29,63 +36,71 @@ A modern, responsive daily tasks app built with React, TypeScript, and Tailwind 
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
-3. Start the dev server:
+3. Set up environment variables:
+
    ```bash
-   npm run dev
+   cp server/.env.example server/.env
+   cp client/.env.example client/.env
    ```
-   Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## Usage
+   Fill in `DATABASE_URL`, `CLERK_SECRET_KEY`, and `VITE_CLERK_PUBLISHABLE_KEY`.
 
-- **Add Task**: Type in the input and click "Add" or press Enter.
-- **Toggle Completion**: Click the checkbox next to a task.
-- **Delete Task**: Click the trash icon next to a task.
-- **Theme Toggle**: Click the sun/moon icon in the top-right to switch light/dark mode.
+4. Set up the database:
 
-## Testing
+   ```bash
+   cd server && npx prisma migrate dev
+   ```
 
-Run tests with:
+5. Start dev servers:
 
-```bash
-npm test
-```
-
-Tests cover adding tasks, toggling, deleting, input validation, and UI interactions.
-
-## Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run test` - Run tests
-- `npm run lint` - Lint code
-- `npm run preview` - Preview production build
+   ```bash
+   pnpm dev          # client on :5173
+   pnpm dev:server   # server on :3001
+   ```
 
 ## Project Structure
 
 ```
-src/
-├── App.tsx          # Main app component
-├── App.test.tsx     # Unit tests for App component
-├── main.tsx         # App entry point
-├── index.css        # Tailwind CSS imports
-├── setupTest.ts     # Test setup
-├── components/
-│   ├── tasks/
-│   │   ├── AddTask.tsx      # Add task form
-│   │   ├── TaskItemList.tsx # Individual task item
-│   │   ├── TaskList.tsx     # Task list container
-│   │   └── TaskListHeader.tsx # Task count header
-├── types/
-│   └── index.ts             # TypeScript types
-└── theme/
-    ├── theme.ts             # Theme definitions
-    ├── ThemeProvider.tsx    # Theme provider component
-    └── useTheme.ts          # Theme hook
+client/
+  src/
+    components/      # calendar/, playlist/, settings/, layout/, ui/
+    hooks/           # useTimer, useCalendar, useNotification
+    api/             # React Query hooks + API client
+    pages/           # SettingsPage, LoginPage, SignupPage
+    context/         # ThemeProvider
+
+server/
+  src/
+    routes/          # days, tasks, sessions, settings, templates
+    services/        # business logic
+    middleware/      # auth (Clerk), validation (Zod), error handling
+  prisma/            # schema and migrations
+
+api/
+  index.ts           # Vercel serverless entry point
 ```
+
+## Commands
+
+- `pnpm dev` — start client dev server
+- `pnpm dev:server` — start server dev server
+- `pnpm build` — build for production
+- `pnpm test` — run all tests
+- `pnpm lint` — lint all (oxlint)
+- `pnpm format` — format all (oxfmt)
+
+## Deployment
+
+Connected to Vercel via GitHub. Pushes to `main` auto-deploy.
+
+Required env vars in Vercel dashboard:
+- `DATABASE_URL`
+- `CLERK_SECRET_KEY`
+- `VITE_CLERK_PUBLISHABLE_KEY`
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT
