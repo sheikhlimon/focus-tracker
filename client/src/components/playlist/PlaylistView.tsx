@@ -215,7 +215,33 @@ export default function PlaylistView() {
     notify,
   ]);
 
+  const pendingStartRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!pendingStartRef.current) return;
+    const pendingTitle = pendingStartRef.current;
+    const realTask = tasks.find(
+      (t) =>
+        !t.id.startsWith("temp-") &&
+        t.title === pendingTitle &&
+        t.status === "queued",
+    );
+    if (realTask) {
+      pendingStartRef.current = null;
+      updateTask.mutate({ taskId: realTask.id, body: { status: "active" } });
+      setActiveTaskId(realTask.id);
+    }
+  }, [tasks]);
+
   function handleStart(taskId: string) {
+    if (taskId.startsWith("temp-")) {
+      const task = tasks.find((t) => t.id === taskId);
+      if (task) pendingStartRef.current = task.title;
+      setActiveTaskId(taskId);
+      notifiedAt.current = null;
+      timer.start();
+      return;
+    }
     updateTask.mutate({ taskId, body: { status: "active" } });
     setActiveTaskId(taskId);
     notifiedAt.current = null;
