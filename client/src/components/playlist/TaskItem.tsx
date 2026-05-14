@@ -23,6 +23,7 @@ export interface TaskItemProps {
   elapsed?: number;
   isTimerRunning?: boolean;
   focusInterval?: number;
+  dragHandleProps?: Record<string, unknown>;
   onStart: () => void;
   onPause: () => void;
   onComplete: () => void;
@@ -38,6 +39,7 @@ function formatTime(seconds: number): string {
 export default function TaskItem({
   task,
   elapsed = 0,
+  dragHandleProps,
   onStart,
   onPause,
   onComplete,
@@ -68,6 +70,7 @@ export default function TaskItem({
       <div
         aria-label="Drag to reorder"
         className="relative flex-shrink-0 cursor-grab p-0.5 text-muted-foreground/30 hover:text-muted-foreground active:cursor-grabbing"
+        {...dragHandleProps}
       >
         <GripVertical className="size-4" />
       </div>

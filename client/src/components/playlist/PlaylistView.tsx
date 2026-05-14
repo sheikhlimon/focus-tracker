@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   DndContext,
@@ -56,9 +56,8 @@ function SortableTaskItem({
       style={style}
       className={cn(isDragging && "opacity-40")}
       {...attributes}
-      {...listeners}
     >
-      <TaskItem task={task} {...props} />
+      <TaskItem task={task} {...props} dragHandleProps={listeners} />
     </div>
   );
 }
@@ -90,16 +89,44 @@ function TaskGroup({
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
+  const [localOrder, setLocalOrder] = useState<string[] | null>(null);
+  const taskIdToTask = useMemo(
+    () => new Map(tasks.map((t) => [t.id, t])),
+    [tasks],
+  );
+  const orderedTasks = useMemo(() => {
+    if (!localOrder) return tasks;
+    const seen = new Set<string>();
+    const result: TaskItemProps["task"][] = [];
+    for (const id of localOrder) {
+      const task = taskIdToTask.get(id);
+      if (task) {
+        result.push(task);
+        seen.add(id);
+      }
+    }
+    for (const task of tasks) {
+      if (!seen.has(task.id)) result.push(task);
+    }
+    return result;
+  }, [localOrder, tasks, taskIdToTask]);
+
+  useEffect(() => {
+    setLocalOrder(null);
+  }, [tasks.map((t) => t.id).join(",")]);
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = tasks.findIndex((t) => t.id === active.id);
-    const newIndex = tasks.findIndex((t) => t.id === over.id);
+    const currentIds = orderedTasks.map((t) => t.id);
+    const oldIndex = currentIds.indexOf(active.id as string);
+    const newIndex = currentIds.indexOf(over.id as string);
     if (oldIndex === -1 || newIndex === -1) return;
 
-    const reordered = arrayMove(tasks, oldIndex, newIndex);
-    onReorder(reordered.map((t) => t.id));
+    const reordered = arrayMove(currentIds, oldIndex, newIndex);
+    setLocalOrder(reordered);
+    onReorder(reordered);
   }
 
   if (tasks.length === 0) return null;
@@ -115,10 +142,10 @@ function TaskGroup({
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={tasks.map((t) => t.id)}
+          items={orderedTasks.map((t) => t.id)}
           strategy={verticalListSortingStrategy}
         >
-          {tasks.map((task, i) => (
+          {orderedTasks.map((task, i) => (
             <SortableTaskItem
               key={task.id}
               task={task}
