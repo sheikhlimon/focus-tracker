@@ -223,29 +223,7 @@ export function useReorderTasks(date: string) {
   return useMutation({
     mutationFn: (taskIds: string[]) =>
       api.patch(`/days/${date}/tasks/reorder`, { taskIds }),
-    onMutate: async (taskIds) => {
-      await queryClient.cancelQueries({ queryKey: ["day", date] });
-      const previous = queryClient.getQueryData<DayData>(["day", date]);
-      if (previous) {
-        const reordered = taskIds
-          .map((id, index) => {
-            const task = previous.tasks.find((t) => t.id === id);
-            return task ? { ...task, position: index } : null;
-          })
-          .filter((t): t is DayTask => t !== null);
-        queryClient.setQueryData<DayData>(["day", date], {
-          ...previous,
-          tasks: reordered,
-        });
-      }
-      return { previous };
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["day", date], context.previous);
-      }
-    },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
     },
   });

@@ -36,7 +36,7 @@ model Settings {
 
 model Day {
   id     String   @id @default(cuid())
-  date   DateTime @unique
+  date   DateTime
   userId String   @map("user_id")
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks  Task[]

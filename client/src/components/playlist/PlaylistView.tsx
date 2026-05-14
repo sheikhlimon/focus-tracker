@@ -15,6 +15,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
 import {
   useDay,
   useAddTask,
@@ -42,20 +43,18 @@ function SortableTaskItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: task.id });
+  } = useSortable({ id: task.id, disabled: task.id.startsWith("temp-") });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : undefined,
-    animationDelay: `${index * 50}ms`,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="animate-in"
+      className={cn(isDragging && "opacity-40")}
       {...attributes}
       {...listeners}
     >
@@ -88,7 +87,7 @@ function TaskGroup({
   onReorder: (ids: string[]) => void;
 }) {
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
   function handleDragEnd(event: DragEndEvent) {
