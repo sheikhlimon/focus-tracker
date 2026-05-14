@@ -7,5 +7,5 @@ await build({
   target: "node22",
   outfile: "api/index.js",
   external: ["@prisma/client", "@prisma/engines"],
-  format: "esm",
+  format: "cjs",
 });
