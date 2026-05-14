@@ -16,7 +16,7 @@ export async function getDaysByMonth(userId: string, month: string) {
       userId,
       date: { gte: startDate, lt: endDate },
     },
-    include: { tasks: true },
+    include: { tasks: { include: { sessions: true } } },
     orderBy: { date: "asc" },
   });
 }
@@ -26,14 +26,16 @@ export async function getDayByDate(userId: string, date: string) {
 
   const existing = await prisma.day.findFirst({
     where: { date: dayDate, userId },
-    include: { tasks: { orderBy: { position: "asc" } } },
+    include: {
+      tasks: { include: { sessions: true }, orderBy: { position: "asc" } },
+    },
   });
 
   if (existing) return existing;
 
   return prisma.day.create({
     data: { date: dayDate, userId },
-    include: { tasks: true },
+    include: { tasks: { include: { sessions: true } } },
   });
 }
 
@@ -50,6 +52,6 @@ export async function createDay(userId: string, date: string) {
 
   return prisma.day.create({
     data: { date: dayDate, userId },
-    include: { tasks: true },
+    include: { tasks: { include: { sessions: true } } },
   });
 }

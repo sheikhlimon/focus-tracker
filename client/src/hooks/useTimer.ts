@@ -12,26 +12,34 @@ export default function useTimer() {
     }
   }, []);
 
-  const start = useCallback(() => {
-    clear();
-    setIsRunning(true);
-    intervalRef.current = setInterval(() => {
-      setElapsed((prev) => prev + 1);
-    }, 1000);
-  }, [clear]);
+  const start = useCallback(
+    (initialSeconds = 0) => {
+      clear();
+      setElapsed(initialSeconds);
+      setIsRunning(true);
+      intervalRef.current = setInterval(() => {
+        setElapsed((prev) => prev + 1);
+      }, 1000);
+    },
+    [clear],
+  );
 
   const pause = useCallback(() => {
     clear();
     setIsRunning(false);
   }, [clear]);
 
-  const resume = useCallback(() => {
-    clear();
-    setIsRunning(true);
-    intervalRef.current = setInterval(() => {
-      setElapsed((prev) => prev + 1);
-    }, 1000);
-  }, [clear]);
+  const resume = useCallback(
+    (initialSeconds = 0) => {
+      clear();
+      setElapsed(initialSeconds);
+      setIsRunning(true);
+      intervalRef.current = setInterval(() => {
+        setElapsed((prev) => prev + 1);
+      }, 1000);
+    },
+    [clear],
+  );
 
   const reset = useCallback(() => {
     clear();

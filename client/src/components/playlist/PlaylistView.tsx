@@ -92,10 +92,20 @@ export default function PlaylistView() {
 
   const runningTask = activeTasks.find((t) => t.status === "active");
 
+  function getSessionElapsed(task: (typeof tasks)[number]): number {
+    const running = task.sessions?.find(
+      (s: { status: string }) => s.status === "running",
+    );
+    if (!running) return 0;
+    return Math.floor(
+      (Date.now() - new Date(running.startTime).getTime()) / 1000,
+    );
+  }
+
   useEffect(() => {
     if (runningTask && !activeTaskId && !timer.isRunning) {
       setActiveTaskId(runningTask.id);
-      timer.start();
+      timer.start(getSessionElapsed(runningTask));
     }
   }, [runningTask?.id, activeTaskId, timer.isRunning]);
 
@@ -114,6 +124,7 @@ export default function PlaylistView() {
         );
       }
       notifiedAt.current = intervalSeconds;
+      handlePause(activeTaskId);
     }
   }, [
     timer.elapsed,

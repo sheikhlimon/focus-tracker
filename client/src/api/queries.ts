@@ -7,11 +7,19 @@ interface MonthDay {
   totalMinutes?: number;
 }
 
+interface Session {
+  id: string;
+  startTime: string;
+  endTime: string | null;
+  status: "running" | "completed";
+}
+
 interface DayTask {
   id: string;
   title: string;
   status: "queued" | "active" | "completed";
   position: number;
+  sessions: Session[];
 }
 
 interface DayData {
