@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm --filter client dev & pnpm --filter server dev & wait",
     "dev:server": "pnpm --filter server dev",
-    "build": "pnpm --filter server exec prisma generate && pnpm --filter client build && node build-api.mjs",
+    "build": "pnpm --filter server exec prisma generate && pnpm --filter client build",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "test": "pnpm -r test",
