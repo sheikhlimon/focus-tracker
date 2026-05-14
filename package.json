@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm --filter client dev & pnpm --filter server dev & wait",
     "dev:server": "pnpm --filter server dev",
-    "build": "pnpm --filter server exec prisma generate && pnpm --filter client build && pnpm --filter server build",
+    "build": "pnpm --filter server exec prisma generate && pnpm --filter client build && pnpm --filter server build && esbuild api/_index.ts --bundle --platform=node --target=node24 --external:@prisma/client --outfile=api/index.js",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "test": "pnpm -r test",
@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@vercel/node": "^5.8.1",
+    "esbuild": "^0.28.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.4",
     "oxfmt": "^0.47.0",
