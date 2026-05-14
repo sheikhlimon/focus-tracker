@@ -32,7 +32,11 @@ import PlaylistHeader from "./PlaylistHeader";
 import useTimer from "../../hooks/useTimer";
 import useNotification from "../../hooks/useNotification";
 
-function SortableTaskItem({ task, ...props }: TaskItemProps) {
+function SortableTaskItem({
+  task,
+  index,
+  ...props
+}: TaskItemProps & { index: number }) {
   const {
     attributes,
     listeners,
@@ -46,10 +50,17 @@ function SortableTaskItem({ task, ...props }: TaskItemProps) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : undefined,
+    animationDelay: `${index * 50}ms`,
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="animate-in"
+      {...attributes}
+      {...listeners}
+    >
       <TaskItem task={task} {...props} />
     </div>
   );
@@ -151,7 +162,7 @@ export default function PlaylistView() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <PlaylistHeader
         date={date!}
         taskCount={tasks.length}
@@ -170,10 +181,11 @@ export default function PlaylistView() {
           strategy={verticalListSortingStrategy}
         >
           <div className="space-y-1">
-            {activeTasks.map((task) => (
+            {activeTasks.map((task, i) => (
               <SortableTaskItem
                 key={task.id}
                 task={task}
+                index={i}
                 elapsed={activeTaskId === task.id ? timer.elapsed : 0}
                 isTimerRunning={activeTaskId === task.id && timer.isRunning}
                 focusInterval={focusInterval}
@@ -188,19 +200,24 @@ export default function PlaylistView() {
       </DndContext>
 
       {completedTasks.length > 0 && (
-        <div className="space-y-1 pt-4 border-t border-border">
-          <p className="px-4 pb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="space-y-1 pt-6 border-t border-border/50">
+          <p className="px-3 pb-2 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
             Completed
           </p>
-          {completedTasks.map((task) => (
-            <TaskItem
+          {completedTasks.map((task, i) => (
+            <div
               key={task.id}
-              task={task}
-              onStart={() => handleStart(task.id)}
-              onPause={() => handlePause(task.id)}
-              onComplete={() => handleComplete(task.id)}
-              onDelete={() => deleteTask.mutate(task.id)}
-            />
+              className="animate-in"
+              style={{ animationDelay: `${i * 50}ms` }}
+            >
+              <TaskItem
+                task={task}
+                onStart={() => handleStart(task.id)}
+                onPause={() => handlePause(task.id)}
+                onComplete={() => handleComplete(task.id)}
+                onDelete={() => deleteTask.mutate(task.id)}
+              />
+            </div>
           ))}
         </div>
       )}

@@ -14,7 +14,7 @@ export default function CalendarView({ month }: CalendarViewProps) {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-center gap-1">
         <button
           onClick={prevMonth}
@@ -22,7 +22,7 @@ export default function CalendarView({ month }: CalendarViewProps) {
         >
           <ChevronLeft className="size-5" />
         </button>
-        <h2 className="min-w-[10rem] text-center text-lg font-semibold">
+        <h2 className="min-w-[10rem] text-center text-lg font-semibold tracking-tight">
           {label}
         </h2>
         <button
@@ -39,13 +39,15 @@ export default function CalendarView({ month }: CalendarViewProps) {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {days.map((day) => (
-          <DateCard
+      <div className="grid grid-cols-7 gap-1.5">
+        {days.map((day, i) => (
+          <div
             key={day.date}
-            date={day.date}
-            isToday={day.date === today}
-          />
+            className="animate-in"
+            style={{ animationDelay: `${i * 20}ms` }}
+          >
+            <DateCard date={day.date} isToday={day.date === today} />
+          </div>
         ))}
       </div>
     </div>

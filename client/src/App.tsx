@@ -20,10 +20,10 @@ function AppShell() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex items-center justify-between border-b border-border px-4 py-3">
+      <header className="flex items-center justify-between px-5 py-4 shadow-[0_1px_0_0_var(--color-border)]">
         <Link
           to="/"
-          className="text-lg font-semibold hover:opacity-80 transition-opacity"
+          className="text-sm font-medium tracking-wide text-muted-foreground hover:text-foreground transition-colors"
         >
           FocusTracker
         </Link>
@@ -32,14 +32,14 @@ function AppShell() {
             to="/settings"
             className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
-            <Settings className="size-5" />
+            <Settings className="size-[18px]" />
           </Link>
           <UserButton afterSignOutUrl="/login" />
         </div>
       </header>
       <div className="flex flex-1 overflow-hidden">
         <Sidebar month={month} />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto px-10 py-8">
           <Routes>
             <Route index element={<CalendarView month={month} />} />
             <Route path="day/:date" element={<PlaylistView />} />
