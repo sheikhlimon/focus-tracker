@@ -3,8 +3,13 @@
   "outputDirectory": "client/dist",
   "installCommand": "pnpm install --node-linker hoisted",
   "framework": null,
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "server/src/**"
+    }
+  },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.cjs" },
+    { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
