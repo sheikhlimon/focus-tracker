@@ -20,7 +20,7 @@ function AppShell() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex items-center justify-between px-5 py-4 shadow-[0_1px_0_0_var(--color-border)]">
+      <header className="flex items-center justify-between px-5 py-4">
         <Link
           to="/"
           className="text-sm font-medium tracking-wide text-muted-foreground hover:text-foreground transition-colors"
