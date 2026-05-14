@@ -13,8 +13,9 @@ model User {
   name      String?
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
-  settings  Settings?
-  days      Day[]
+  settings   Settings?
+  days       Day[]
+  templates  TaskTemplate[]
 
   @@map("users")
 }
@@ -25,6 +26,7 @@ model Settings {
   focusInterval       Int     @default(25) @map("focus_interval")
   notificationsEnabled Boolean @default(true) @map("notifications_enabled")
   taskOverflow        String  @default("keep") @map("task_overflow")
+  autoPopulate        Boolean @default(true) @map("auto_populate")
   theme               String  @default("system")
   weekStartsOn        String  @default("monday") @map("week_starts_on")
   user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -47,10 +49,13 @@ model Task {
   id       String   @id @default(cuid())
   title    String
   position Int
-  status   String   @default("queued")
-  dayId    String   @map("day_id")
-  day      Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
-  sessions Session[]
+  status      String   @default("queued")
+  url         String?
+  durationMin Int      @default(25) @map("duration_min")
+  session     String   @default("day")
+  dayId       String   @map("day_id")
+  day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  sessions    Session[]
 
   @@map("tasks")
 }
@@ -66,4 +71,17 @@ model Session {
   task            Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
+}
+
+model TaskTemplate {
+  id          String  @id @default(cuid())
+  title       String
+  url         String?
+  durationMin Int     @map("duration_min")
+  session     String  @default("day")
+  position    Int
+  userId      String  @map("user_id")
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("task_templates")
 }
