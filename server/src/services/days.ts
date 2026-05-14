@@ -118,19 +118,14 @@ export async function getDayByDate(userId: string, date: string) {
 
   await applyRollover(userId, dayDate);
 
-  let day = await prisma.day.findFirst({
-    where: { date: dayDate, userId },
+  const day = await prisma.day.upsert({
+    where: { date_userId: { date: dayDate, userId } },
+    update: {},
+    create: { date: dayDate, userId },
     include: {
       tasks: { include: { sessions: true }, orderBy: { position: "asc" } },
     },
   });
-
-  if (!day) {
-    day = await prisma.day.create({
-      data: { date: dayDate, userId },
-      include: { tasks: { include: { sessions: true } } },
-    });
-  }
 
   if (day.tasks.length === 0) {
     await applyAutoPopulate(userId, day.id);

@@ -124,6 +124,19 @@ export function useAddTask(date: string) {
       }
       return { previous };
     },
+    onSuccess: (newTask) => {
+      queryClient.setQueryData<DayData>(["day", date], (old) => {
+        if (!old) return old;
+        const real = newTask as DayTask;
+        return {
+          ...old,
+          tasks: old.tasks.map((t) =>
+            t.id.startsWith("temp-") && t.title === real.title ? real : t,
+          ),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: ["month", month] });
+    },
     onError: (_err, _body, context) => {
       if (context?.previous) {
         queryClient.setQueryData(["day", date], context.previous);
@@ -131,7 +144,6 @@ export function useAddTask(date: string) {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["day", date] });
-      queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });
 }
