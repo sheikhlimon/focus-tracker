@@ -151,7 +151,7 @@ export default function TemplateEditor() {
   return (
     <div className="space-y-8">
       <section className="space-y-3">
-        <h3 className="px-3 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+        <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
           Day
         </h3>
         <DndContext
@@ -184,7 +184,7 @@ export default function TemplateEditor() {
       </section>
 
       <section className="space-y-3">
-        <h3 className="px-3 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+        <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
           Night
         </h3>
         <DndContext

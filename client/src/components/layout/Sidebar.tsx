@@ -21,7 +21,7 @@ export default function Sidebar({ month }: SidebarProps) {
     <aside className="w-72 bg-sidebar p-5 space-y-8 overflow-y-auto">
       {todayDays.length > 0 && (
         <section>
-          <h3 className="mb-2.5 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+          <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             Today
           </h3>
           {todayDays.map((d) => (
@@ -38,7 +38,7 @@ export default function Sidebar({ month }: SidebarProps) {
 
       {upcoming.length > 0 && (
         <section>
-          <h3 className="mb-2.5 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+          <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             Upcoming
           </h3>
           <div className="space-y-1">
@@ -56,7 +56,7 @@ export default function Sidebar({ month }: SidebarProps) {
 
       {past.length > 0 && (
         <section>
-          <h3 className="mb-2.5 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+          <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             Past
           </h3>
           <div className="space-y-1 opacity-60">

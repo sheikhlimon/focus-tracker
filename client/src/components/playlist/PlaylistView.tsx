@@ -107,7 +107,7 @@ function TaskGroup({
 
   return (
     <div className="space-y-1">
-      <p className="px-3 pb-1 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+      <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
         {label}
       </p>
       <DndContext
@@ -304,7 +304,7 @@ export default function PlaylistView() {
 
       {completedTasks.length > 0 && (
         <div className="space-y-1 pt-6 border-t border-border/50">
-          <p className="px-3 pb-2 text-[11px] font-medium uppercase tracking-widest text-muted-foreground/60">
+          <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             Completed
           </p>
           {completedTasks.map((task, i) => (
