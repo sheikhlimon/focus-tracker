@@ -12,6 +12,7 @@
     "prepare": "husky || true"
   },
   "devDependencies": {
+    "@vercel/node": "^5.8.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.4",
     "oxfmt": "^0.47.0",
