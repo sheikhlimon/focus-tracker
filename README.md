@@ -29,8 +29,8 @@ Full-stack focus session tracker with calendar navigation, Pomodoro-style timers
 1. Clone the repo:
 
    ```bash
-   git clone https://github.com/sheikhlimon/daily-tasks-app.git
-   cd daily-tasks-app
+   git clone https://github.com/sheikhlimon/focus-tracker.git
+   cd focus-tracker
    ```
 
 2. Install dependencies:
