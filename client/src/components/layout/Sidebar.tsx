@@ -17,8 +17,19 @@ export default function Sidebar({ month }: SidebarProps) {
   );
   const past = days.filter((d) => d.date < today && d.date.startsWith(month));
 
+  const isEmpty =
+    todayDays.length === 0 && upcoming.length === 0 && past.length === 0;
+
   return (
     <aside className="w-72 bg-sidebar p-5 space-y-8 overflow-y-auto">
+      {isEmpty && (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <p className="text-sm text-muted-foreground/50">No sessions yet.</p>
+          <p className="mt-1 text-xs text-muted-foreground/30">
+            Create a task to get started.
+          </p>
+        </div>
+      )}
       {todayDays.length > 0 && (
         <section>
           <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
