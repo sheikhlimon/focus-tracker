@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useCalendar } from "../../hooks/useCalendar";
 import { getLocalDate } from "../../lib/utils";
-import DateCard from "./DateCard";
 
 interface CalendarViewProps {
   month: string;
@@ -10,6 +10,7 @@ interface CalendarViewProps {
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function CalendarView({ month }: CalendarViewProps) {
+  const navigate = useNavigate();
   const { days, label, nextMonth, prevMonth } = useCalendar(month);
 
   const today = getLocalDate();
@@ -41,15 +42,21 @@ export default function CalendarView({ month }: CalendarViewProps) {
       </div>
 
       <div className="grid grid-cols-7 gap-1.5">
-        {days.map((day, i) => (
-          <div
-            key={day.date}
-            className="animate-in"
-            style={{ animationDelay: `${i * 20}ms` }}
-          >
-            <DateCard date={day.date} isToday={day.date === today} />
-          </div>
-        ))}
+        {days.map((day, i) => {
+          const isToday = day.date === today;
+          return (
+            <button
+              key={day.date}
+              onClick={() => navigate(`/day/${day.date}`)}
+              className={`relative flex items-center justify-center rounded-lg p-2 text-sm transition-all duration-200 cursor-pointer
+                ${isToday ? "bg-primary text-primary-foreground font-bold" : ""}
+                ${!day.isCurrentMonth ? "text-muted-foreground/30 hover:bg-muted/50" : !isToday ? "text-foreground hover:bg-muted" : ""}`}
+              style={{ animationDelay: `${i * 20}ms` }}
+            >
+              {parseInt(day.date.split("-")[2], 10)}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
