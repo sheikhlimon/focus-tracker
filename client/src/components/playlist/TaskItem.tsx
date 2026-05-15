@@ -104,13 +104,22 @@ export default function TaskItem({
 
       <div className="relative flex flex-shrink-0 items-center gap-0.5">
         {task.status === "queued" && (
-          <button
-            onClick={onStart}
-            aria-label="Start task"
-            className="rounded-lg p-1.5 text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer"
-          >
-            <Play className="size-4" />
-          </button>
+          <>
+            <button
+              onClick={onStart}
+              aria-label="Start task"
+              className="rounded-lg p-1.5 text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors cursor-pointer"
+            >
+              <Play className="size-4" />
+            </button>
+            <button
+              onClick={onDelete}
+              aria-label="Delete task"
+              className="rounded-lg p-1.5 text-muted-foreground/40 hover:bg-destructive/10 hover:text-destructive active:bg-destructive/20 transition-colors cursor-pointer"
+            >
+              <X className="size-4" />
+            </button>
+          </>
         )}
 
         {isActive && (

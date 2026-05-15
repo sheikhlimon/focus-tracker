@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCalendar } from "../../hooks/useCalendar";
+import { getLocalDate } from "../../lib/utils";
 import DateCard from "./DateCard";
 
 interface CalendarViewProps {
@@ -11,7 +12,7 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function CalendarView({ month }: CalendarViewProps) {
   const { days, label, nextMonth, prevMonth } = useCalendar(month);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDate();
 
   return (
     <div className="space-y-5">

@@ -1,4 +1,5 @@
 import { useMonth } from "../../api/queries";
+import { getLocalDate } from "../../lib/utils";
 import DateCard from "../calendar/DateCard";
 
 interface SidebarProps {
@@ -9,7 +10,7 @@ export default function Sidebar({ month }: SidebarProps) {
   const { data } = useMonth(month);
   const days = data?.days ?? [];
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDate();
 
   const todayDays = days.filter((d) => d.date === today);
   const upcoming = days.filter(

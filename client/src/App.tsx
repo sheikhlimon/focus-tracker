@@ -7,13 +7,7 @@ import Sidebar from "./components/layout/Sidebar";
 import CalendarView from "./components/calendar/CalendarView";
 import PlaylistView from "./components/playlist/PlaylistView";
 import SettingsPage from "./pages/SettingsPage";
-
-function getCurrentMonth() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  return `${y}-${m}`;
-}
+import { getCurrentMonth } from "./lib/utils";
 
 function AppShell() {
   const month = getCurrentMonth();
