@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@fontsource-variable/geist";
 import "./index.css";
 import App from "./App.tsx";
 import { ThemeProvider } from "./theme/ThemeProvider.tsx";
