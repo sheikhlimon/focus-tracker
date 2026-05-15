@@ -12,11 +12,15 @@ export default function Sidebar({ month }: SidebarProps) {
 
   const today = getLocalDate();
 
-  const todayDays = days.filter((d) => d.date === today);
-  const upcoming = days.filter(
+  const daysWithTasks = days.filter((d) => d.taskCount > 0);
+
+  const todayDays = daysWithTasks.filter((d) => d.date === today);
+  const upcoming = daysWithTasks.filter(
     (d) => d.date > today && d.date.startsWith(month),
   );
-  const past = days.filter((d) => d.date < today && d.date.startsWith(month));
+  const past = daysWithTasks.filter(
+    (d) => d.date < today && d.date.startsWith(month),
+  );
 
   const isEmpty =
     todayDays.length === 0 && upcoming.length === 0 && past.length === 0;
