@@ -30,7 +30,7 @@ export function createApp() {
 
 const PORT = process.env.PORT || 3001;
 
-if (process.env.NODE_ENV !== "test") {
+if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
   const app = createApp();
   app.listen(PORT, () => {
     console.warn(`Server running on port ${PORT}`);
