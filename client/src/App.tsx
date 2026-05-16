@@ -17,7 +17,7 @@ function AppShell() {
       <header className="flex items-center justify-between bg-muted/50 px-5 py-4">
         <Link
           to="/"
-          className="flex items-center gap-2 text-base font-semibold tracking-tight text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-2 text-base font-semibold tracking-tight text-foreground cursor-pointer"
         >
           <Target className="size-5" />
           FocusTracker
