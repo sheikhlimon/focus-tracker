@@ -106,9 +106,10 @@ export function useAddTask(date: string) {
     onMutate: async (body) => {
       await queryClient.cancelQueries({ queryKey: ["day", date] });
       const previous = queryClient.getQueryData<DayData>(["day", date]);
+      const tempId = `temp-${Date.now()}`;
       if (previous) {
         const tempTask: DayTask = {
-          id: `temp-${Date.now()}`,
+          id: tempId,
           title: body.title,
           status: "queued",
           position: previous.tasks.length,
@@ -122,17 +123,16 @@ export function useAddTask(date: string) {
           tasks: [...previous.tasks, tempTask],
         });
       }
-      return { previous };
+      return { previous, tempId };
     },
-    onSuccess: (newTask) => {
+    onSuccess: (newTask, _body, context) => {
+      const tempId = context.tempId;
       queryClient.setQueryData<DayData>(["day", date], (old) => {
         if (!old) return old;
         const real = newTask as DayTask;
         return {
           ...old,
-          tasks: old.tasks.map((t) =>
-            t.id.startsWith("temp-") && t.title === real.title ? real : t,
-          ),
+          tasks: old.tasks.map((t) => (t.id === tempId ? real : t)),
         };
       });
       queryClient.invalidateQueries({ queryKey: ["month", month] });
@@ -207,7 +207,6 @@ export function useDeleteTask(date: string) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["day", date] });
       queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });

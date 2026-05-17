@@ -245,24 +245,18 @@ export default function PlaylistView() {
 
   useEffect(() => {
     if (!pendingStartRef.current) return;
-    const pendingTitle = pendingStartRef.current;
-    const realTask = tasks.find(
-      (t) =>
-        !t.id.startsWith("temp-") &&
-        t.title === pendingTitle &&
-        t.status === "queued",
-    );
-    if (realTask) {
+    const pendingId = pendingStartRef.current;
+    const oldTask = tasks.find((t) => t.id === pendingId);
+    if (oldTask && !oldTask.id.startsWith("temp-")) {
       pendingStartRef.current = null;
-      updateTask.mutate({ taskId: realTask.id, body: { status: "active" } });
-      setActiveTaskId(realTask.id);
+      updateTask.mutate({ taskId: oldTask.id, body: { status: "active" } });
+      setActiveTaskId(oldTask.id);
     }
   }, [tasks]);
 
   function handleStart(taskId: string) {
     if (taskId.startsWith("temp-")) {
-      const task = tasks.find((t) => t.id === taskId);
-      if (task) pendingStartRef.current = task.title;
+      pendingStartRef.current = taskId;
       setActiveTaskId(taskId);
       notifiedAt.current = null;
       timer.start();
