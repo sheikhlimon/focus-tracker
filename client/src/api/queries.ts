@@ -177,7 +177,6 @@ export function useUpdateTask(date: string) {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["day", date] });
       queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });
