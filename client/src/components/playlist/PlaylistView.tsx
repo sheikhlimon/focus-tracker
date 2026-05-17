@@ -198,20 +198,28 @@ export default function PlaylistView() {
 
   const runningTask = activeTasks.find((t) => t.status === "active");
 
-  function getSessionElapsed(task: (typeof tasks)[number]): number {
-    const running = task.sessions?.find(
-      (s: { status: string }) => s.status === "running",
-    );
-    if (!running) return 0;
-    return Math.floor(
-      (Date.now() - new Date(running.startTime).getTime()) / 1000,
-    );
+  function getAccumulatedElapsed(task: (typeof tasks)[number]): number {
+    if (!task.sessions?.length) return 0;
+    let total = 0;
+    for (const s of task.sessions) {
+      if (s.status === "running") {
+        total += Math.floor(
+          (Date.now() - new Date(s.startTime).getTime()) / 1000,
+        );
+      } else if (s.endTime) {
+        total += Math.floor(
+          (new Date(s.endTime).getTime() - new Date(s.startTime).getTime()) /
+            1000,
+        );
+      }
+    }
+    return total;
   }
 
   useEffect(() => {
     if (runningTask && !activeTaskId && !timer.isRunning) {
       setActiveTaskId(runningTask.id);
-      timer.start(getSessionElapsed(runningTask));
+      timer.start(getAccumulatedElapsed(runningTask));
     }
   }, [runningTask?.id, activeTaskId, timer.isRunning]);
 
@@ -298,7 +306,8 @@ export default function PlaylistView() {
     updateTask.mutate({ taskId, body: { status: "active" } });
     setActiveTaskId(taskId);
     notifiedAt.current = null;
-    timer.start();
+    const task = tasks.find((t) => t.id === taskId);
+    timer.start(task ? getAccumulatedElapsed(task) : 0);
   }
 
   function handlePause(taskId: string) {
