@@ -6,14 +6,15 @@ export default function useNotification() {
     return result === "granted";
   }
 
-  async function notify(title: string, body: string) {
+  function notify(title: string, body: string) {
     if (!("Notification" in window)) return;
-    if (Notification.permission === "default") {
-      await requestPermission();
-    }
     if (Notification.permission !== "granted") return;
     new Notification(title, { body });
   }
 
-  return { requestPermission, notify };
+  const needsPermission =
+    typeof Notification !== "undefined" &&
+    Notification.permission === "default";
+
+  return { requestPermission, notify, needsPermission };
 }

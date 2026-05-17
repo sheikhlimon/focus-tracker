@@ -176,8 +176,9 @@ export default function PlaylistView() {
   const reorderTasks = useReorderTasks(date!);
 
   const timer = useTimer();
-  const { notify } = useNotification();
+  const { notify, requestPermission, needsPermission } = useNotification();
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const [showNotifBanner, setShowNotifBanner] = useState(needsPermission);
 
   const focusInterval = settings?.focusInterval ?? 25;
   const notifiedAt = useRef<number | null>(null);
@@ -286,6 +287,31 @@ export default function PlaylistView() {
         taskCount={tasks.length}
         onBack={() => navigate("/")}
       />
+
+      {showNotifBanner && (
+        <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-2.5 text-sm">
+          <span className="text-muted-foreground">
+            Get notified when focus sessions end
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={async () => {
+                await requestPermission();
+                setShowNotifBanner(false);
+              }}
+              className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
+            >
+              Enable
+            </button>
+            <button
+              onClick={() => setShowNotifBanner(false)}
+              className="rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       <AddTaskInput
         defaultDuration={focusInterval}

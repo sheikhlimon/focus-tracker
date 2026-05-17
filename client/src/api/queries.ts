@@ -107,32 +107,30 @@ export function useAddTask(date: string) {
       await queryClient.cancelQueries({ queryKey: ["day", date] });
       const previous = queryClient.getQueryData<DayData>(["day", date]);
       const tempId = `temp-${Date.now()}`;
-      if (previous) {
-        const tempTask: DayTask = {
-          id: tempId,
-          title: body.title,
-          status: "queued",
-          position: previous.tasks.length,
-          url: null,
-          durationMin: body.durationMin ?? 25,
-          session: "day",
-          sessions: [],
-        };
-        queryClient.setQueryData<DayData>(["day", date], {
-          ...previous,
-          tasks: [...previous.tasks, tempTask],
-        });
-      }
+      const tempTask: DayTask = {
+        id: tempId,
+        title: body.title,
+        status: "queued",
+        position: previous ? previous.tasks.length : 0,
+        url: null,
+        durationMin: body.durationMin ?? 25,
+        session: "day",
+        sessions: [],
+      };
+      queryClient.setQueryData<DayData>(["day", date], {
+        date,
+        tasks: [...(previous?.tasks ?? []), tempTask],
+      });
       return { previous, tempId };
     },
     onSuccess: (newTask, _body, context) => {
       const tempId = context.tempId;
+      const real = newTask as DayTask;
       queryClient.setQueryData<DayData>(["day", date], (old) => {
-        if (!old) return old;
-        const real = newTask as DayTask;
+        const tasks = old?.tasks ?? [];
         return {
-          ...old,
-          tasks: old.tasks.map((t) => (t.id === tempId ? real : t)),
+          date,
+          tasks: tasks.map((t) => (t.id === tempId ? real : t)),
         };
       });
       queryClient.invalidateQueries({ queryKey: ["month", month] });
