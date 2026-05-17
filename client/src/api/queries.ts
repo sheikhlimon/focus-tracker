@@ -142,9 +142,6 @@ export function useAddTask(date: string) {
         queryClient.setQueryData(["day", date], context.previous);
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["day", date] });
-    },
   });
 }
 
