@@ -169,13 +169,21 @@ export function useUpdateTask(date: string) {
       }
       return { previous };
     },
+    onSuccess: (updatedTask, { taskId }) => {
+      queryClient.setQueryData<DayData>(["day", date], (old) => {
+        if (!old) return old;
+        const real = updatedTask as DayTask;
+        return {
+          ...old,
+          tasks: old.tasks.map((t) => (t.id === taskId ? real : t)),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: ["month", month] });
+    },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(["day", date], context.previous);
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["month", month] });
     },
   });
 }
