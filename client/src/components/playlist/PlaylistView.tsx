@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   DndContext,
@@ -23,6 +24,8 @@ import {
   useDeleteTask,
   useReorderTasks,
   useSettings,
+  type DayData,
+  type DayTask,
 } from "../../api/queries";
 import type { TaskItemProps } from "./TaskItem";
 import TaskItem from "./TaskItem";
@@ -167,6 +170,7 @@ function TaskGroup({
 export default function PlaylistView() {
   const { date } = useParams<{ date: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data } = useDay(date!);
   const { data: settings } = useSettings();
@@ -243,21 +247,49 @@ export default function PlaylistView() {
   ]);
 
   const pendingStartRef = useRef<string | null>(null);
+  const prevTaskIdsRef = useRef<string>("");
 
   useEffect(() => {
-    if (!pendingStartRef.current) return;
-    const pendingId = pendingStartRef.current;
-    const oldTask = tasks.find((t) => t.id === pendingId);
-    if (oldTask && !oldTask.id.startsWith("temp-")) {
-      pendingStartRef.current = null;
-      updateTask.mutate({ taskId: oldTask.id, body: { status: "active" } });
-      setActiveTaskId(oldTask.id);
+    if (!pendingStartRef.current) {
+      prevTaskIdsRef.current = tasks.map((t) => t.id).join(",");
+      return;
     }
+    const pendingTempId = pendingStartRef.current;
+
+    // Temp ID still in list — not replaced yet
+    if (tasks.some((t) => t.id === pendingTempId)) {
+      prevTaskIdsRef.current = tasks.map((t) => t.id).join(",");
+      return;
+    }
+
+    // Temp ID gone — find the new real ID that replaced it
+    const prevIds = new Set(prevTaskIdsRef.current.split(","));
+    const newRealTask = tasks.find(
+      (t) => !prevIds.has(t.id) && !t.id.startsWith("temp-"),
+    );
+
+    if (newRealTask) {
+      pendingStartRef.current = null;
+      setActiveTaskId(newRealTask.id);
+      updateTask.mutate({ taskId: newRealTask.id, body: { status: "active" } });
+    }
+
+    prevTaskIdsRef.current = tasks.map((t) => t.id).join(",");
   }, [tasks]);
 
   function handleStart(taskId: string) {
     if (taskId.startsWith("temp-")) {
       pendingStartRef.current = taskId;
+      // Optimistically set temp task to active in cache
+      queryClient.setQueryData<DayData>(["day", date], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          tasks: old.tasks.map((t) =>
+            t.id === taskId ? ({ ...t, status: "active" } as DayTask) : t,
+          ),
+        };
+      });
       setActiveTaskId(taskId);
       notifiedAt.current = null;
       timer.start();

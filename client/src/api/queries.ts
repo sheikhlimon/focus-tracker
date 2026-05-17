@@ -14,7 +14,7 @@ interface Session {
   status: "running" | "completed";
 }
 
-interface DayTask {
+export interface DayTask {
   id: string;
   title: string;
   status: "queued" | "active" | "completed";
@@ -25,7 +25,7 @@ interface DayTask {
   sessions: Session[];
 }
 
-interface DayData {
+export interface DayData {
   date: string;
   tasks: DayTask[];
 }
