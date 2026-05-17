@@ -54,21 +54,21 @@ describe("TaskItem", () => {
     expect(screen.getByLabelText("Pause task")).toBeInTheDocument();
   });
 
-  it("should show done and delete buttons for active task", () => {
+  it("should show pause and delete buttons for active task", () => {
     render(
       <TaskItem {...defaultProps} task={createTask({ status: "active" })} />,
     );
-    expect(screen.getByLabelText("Complete task")).toBeInTheDocument();
+    expect(screen.getByLabelText("Pause task")).toBeInTheDocument();
     expect(screen.getByLabelText("Delete task")).toBeInTheDocument();
   });
 
-  it("should call onComplete when done button clicked", async () => {
+  it("should call onPause when pause button clicked", async () => {
     const user = userEvent.setup();
     render(
       <TaskItem {...defaultProps} task={createTask({ status: "active" })} />,
     );
-    await user.click(screen.getByLabelText("Complete task"));
-    expect(defaultProps.onComplete).toHaveBeenCalled();
+    await user.click(screen.getByLabelText("Pause task"));
+    expect(defaultProps.onPause).toHaveBeenCalled();
   });
 
   it("should show completed state styling", () => {

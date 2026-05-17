@@ -229,7 +229,7 @@ export default function PlaylistView() {
         );
       }
       notifiedAt.current = intervalSeconds;
-      handlePause(activeTaskId);
+      handleComplete(activeTaskId);
     }
   }, [
     timer.elapsed,

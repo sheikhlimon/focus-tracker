@@ -1,11 +1,4 @@
-import {
-  GripVertical,
-  Play,
-  Pause,
-  Check,
-  X,
-  ExternalLink,
-} from "lucide-react";
+import { GripVertical, Play, Pause, X, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Task {
@@ -42,7 +35,6 @@ export default function TaskItem({
   dragHandleProps,
   onStart,
   onPause,
-  onComplete,
   onDelete,
 }: TaskItemProps) {
   const isActive = task.status === "active";
@@ -130,13 +122,6 @@ export default function TaskItem({
               className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted active:bg-muted/80 transition-colors cursor-pointer"
             >
               <Pause className="size-4" />
-            </button>
-            <button
-              onClick={onComplete}
-              aria-label="Complete task"
-              className="rounded-lg p-1.5 text-green-600 hover:bg-green-500/10 active:bg-green-500/20 dark:text-green-400 dark:hover:bg-green-500/15 transition-colors cursor-pointer"
-            >
-              <Check className="size-4" />
             </button>
             <button
               onClick={onDelete}
