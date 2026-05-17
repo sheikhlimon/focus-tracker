@@ -1,10 +1,20 @@
 import prisma from "../db";
 
-export async function addTask(dayId: string, title: string) {
+export async function addTask(
+  dayId: string,
+  title: string,
+  durationMin?: number,
+) {
   const count = await prisma.task.count({ where: { dayId } });
 
   return prisma.task.create({
-    data: { title, position: count, status: "queued", dayId },
+    data: {
+      title,
+      position: count,
+      status: "queued",
+      dayId,
+      durationMin: durationMin ?? 25,
+    },
     include: { sessions: true },
   });
 }

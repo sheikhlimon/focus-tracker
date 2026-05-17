@@ -11,6 +11,7 @@ router.use(authMiddleware);
 
 const createTaskSchema = z.object({
   title: z.string().min(1),
+  durationMin: z.number().int().min(1).max(480).optional(),
 });
 
 const updateTaskSchema = z.object({
@@ -44,7 +45,11 @@ router.post(
       return;
     }
 
-    const task = await tasksService.addTask(dayId, req.body.title);
+    const task = await tasksService.addTask(
+      dayId,
+      req.body.title,
+      req.body.durationMin,
+    );
     res.status(201).json(task);
   },
 );
